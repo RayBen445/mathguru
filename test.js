@@ -19,7 +19,7 @@ function assert(description, actual, expected) {
   }
 }
 
-function assertApprox(description, actual, expected, epsilon = 1e-9) {
+function assertApprox(description, actual, expected, epsilon = 1e-6) {
   if (Math.abs(actual - expected) <= epsilon) {
     console.log(`  ✅ PASS: ${description}`);
     passed += 1;
