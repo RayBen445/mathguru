@@ -10,7 +10,18 @@ const { addHistoryEntry } = require('../history/historyManager');
 const { formatWithPrecision } = require('../utils/precision');
 const { buildStartupBanner } = require('./branding');
 
-const CATEGORY_CHOICES = ['Basic Math', 'Scientific Math', 'Economics', 'Finance', 'Help', 'Exit'];
+const CATEGORY_CHOICES = [
+  'Basic Math',
+  'Scientific Math',
+  'Economics',
+  'Finance',
+  'Symbolic Math',
+  'Graphing',
+  'LaTeX',
+  'Formula Engine',
+  'Help',
+  'Exit',
+];
 let inquirerInstance;
 
 async function getInquirer() {
@@ -42,6 +53,19 @@ async function promptNumericValue(label, command) {
   return answer.value;
 }
 
+async function promptTextValue(message) {
+  const inquirer = await getInquirer();
+  const answer = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'value',
+      message,
+      validate: (input) => (input && input.trim() ? true : 'Value is required.'),
+    },
+  ]);
+  return answer.value;
+}
+
 async function promptAverageValues() {
   const inquirer = await getInquirer();
   const answer = await inquirer.prompt([
@@ -70,12 +94,12 @@ async function runInteractiveOperation(command) {
 
     if (command === 'average') {
       rawArgs = await promptAverageValues();
-    } else if (command === 'eval') {
-      const inquirer = await getInquirer();
-      const answer = await inquirer.prompt([
-        { type: 'input', name: 'expression', message: 'Enter expression:' },
-      ]);
-      rawArgs = [answer.expression];
+    } else if (command === 'eval' || command === 'calc' || command === 'latex') {
+      rawArgs = [await promptTextValue('Enter expression:')];
+    } else if (command === 'graph') {
+      rawArgs = [await promptTextValue('Enter graph expression (e.g. sin(x)):')];
+    } else if (command === 'formula' || command === 'search' || command === 'explain') {
+      rawArgs = [await promptTextValue('Enter query/category:')];
     } else {
       const definition = COMMANDS[command];
       rawArgs = [];
@@ -85,14 +109,20 @@ async function runInteractiveOperation(command) {
       }
     }
 
-    const spinner = ora('Calculating...').start();
+    const spinner = ora('Processing...').start();
     const result = executeCommand(command, rawArgs);
     spinner.succeed('Done');
 
     const config = readConfig();
-    const formatted = formatWithPrecision(result, config.precision);
-    addHistoryEntry(command, rawArgs, Number(result));
-    printResult(formatted);
+    if (typeof result === 'number' && Number.isFinite(result)) {
+      const formatted = formatWithPrecision(result, config.precision);
+      addHistoryEntry(command, rawArgs, Number(result));
+      printResult(formatted);
+      return;
+    }
+
+    addHistoryEntry(command, rawArgs, result);
+    printInfo(String(result));
   } catch (error) {
     printError(error.message);
   }

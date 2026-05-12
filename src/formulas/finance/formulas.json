@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Compound Interest",
+    "category": "finance",
+    "formula": "A = P(1 + r/n)^(nt)",
+    "description": "Calculates compounded future value.",
+    "variables": {"A": "Final amount", "P": "Principal", "r": "Annual rate", "n": "Compounding frequency", "t": "Years"},
+    "examples": ["P=1000,r=0.05,n=12,t=2"],
+    "applications": ["Investment growth", "Savings projections"],
+    "keywords": ["compound-interest", "finance", "investment"]
+  }
+]

@@ -9,6 +9,8 @@ const DEFAULT_CONFIG = {
   currencySymbol: '$',
   scientificMode: false,
   shellStartup: false,
+  graphSize: '80x20',
+  graphFormat: 'ascii',
 };
 
 const CONFIG_DIR = path.join(os.homedir(), '.mathguru');
@@ -69,6 +71,22 @@ function normalizeValue(key, value) {
       throw new Error('config: exportFormat must be one of json, txt, csv, md/markdown.');
     }
     return normalized;
+  }
+
+  if (key === 'graphFormat') {
+    const lowered = String(value).toLowerCase();
+    if (!['ascii', 'png', 'svg'].includes(lowered)) {
+      throw new Error('config: graphFormat must be one of ascii, png, svg.');
+    }
+    return lowered;
+  }
+
+  if (key === 'graphSize') {
+    const text = String(value).trim();
+    if (!/^\d+x\d+$/i.test(text)) {
+      throw new Error('config: graphSize must use WIDTHxHEIGHT format, e.g. 80x20.');
+    }
+    return text.toLowerCase();
   }
 
   if (key === 'currencySymbol') {

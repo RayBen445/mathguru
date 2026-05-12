@@ -93,6 +93,16 @@ function toText(payload) {
   return [...header, ...body].join('\n');
 }
 
+function toCsv(payload) {
+  const header = ['timestamp', 'command', 'inputs', 'result'];
+  const rows = payload.entries.map((entry) =>
+    [entry.timestamp, entry.command, JSON.stringify(entry.inputs || []), String(entry.result)]
+      .map((value) => `"${String(value).replace(/"/g, '""')}"`)
+      .join(',')
+  );
+  return [header.join(','), ...rows].join('\n');
+}
+
 function toMarkdown(payload) {
   const lines = [
     `# Session: ${payload.name}`,
@@ -116,8 +126,8 @@ function toMarkdown(payload) {
 function exportSession(format, nameOrPath) {
   const extensionRaw = String(format || 'json').toLowerCase();
   const extension = extensionRaw === 'markdown' ? 'md' : extensionRaw;
-  if (!['json', 'txt', 'md'].includes(extension)) {
-    throw new Error('export-session: format must be json, txt, or markdown/md.');
+  if (!['json', 'txt', 'md', 'csv'].includes(extension)) {
+    throw new Error('export-session: format must be json, txt, csv, or markdown/md.');
   }
 
   const { payload } = readSession(nameOrPath);
@@ -129,6 +139,8 @@ function exportSession(format, nameOrPath) {
     content = JSON.stringify(payload, null, 2);
   } else if (extension === 'txt') {
     content = toText(payload);
+  } else if (extension === 'csv') {
+    content = toCsv(payload);
   } else {
     content = toMarkdown(payload);
   }

@@ -1,7 +1,7 @@
 const { POWERED_BY_KONTYRA } = require('./branding');
 
 function buildDocsText(version) {
-  return `MathGuru CLI v${version}
+  return `MathGuru Unified Platform v${version}
 ${POWERED_BY_KONTYRA}
 
 Usage:
@@ -14,6 +14,30 @@ Usage:
 - mathguru sqrt 25
 - mathguru inflation 500 700
 - mathguru eval "sqrt(25) + 5"
+
+=== Symbolic Math ===
+- mathguru calc "sqrt(144)"
+- mathguru calc "diff(x^2)"
+- mathguru calc "integrate(sin(x))"
+- mathguru calc "solve(x^2-4=0)"
+
+=== Graphing ===
+- mathguru graph "sin(x)"
+- mathguru graph "x^2" --format svg --size 640x360
+- mathguru graph "cos(x)" --format png
+
+=== LaTeX ===
+- mathguru latex "integral x^2"
+- mathguru latex "sin(x)^2 + cos(x)^2"
+
+=== Formula Engine ===
+- mathguru formula
+- mathguru formula calculus
+- mathguru formula economics cobb-douglas
+- mathguru formula finance compound-interest
+- mathguru formula search derivative
+- mathguru search inflation
+- mathguru explain cobb-douglas
 
 === Aliases ===
 - mg (CLI alias for mathguru)
@@ -29,6 +53,8 @@ Usage:
 - mathguru config
 - mathguru config get precision
 - mathguru config set precision 2
+- mathguru config set graphSize 80x20
+- mathguru config set graphFormat svg
 
 === Export ===
 - mathguru export history [json|txt|csv|markdown]
@@ -37,21 +63,11 @@ Usage:
 === Session Management ===
 - mathguru save-session [name]
 - mathguru load-session [name]
-- mathguru export-session [json|txt|markdown] [name]
+- mathguru export-session [json|txt|markdown|csv] [name]
 
 === Shell ===
 - mathguru shell
 - Shell commands: help, clear, stats, exit
-
-=== Economics/Finance Examples ===
-- mathguru gdp-growth 10000 12000
-- mathguru simple-interest 1000 5 2
-- mathguru compound-interest 1000 5 2 12
-- mathguru loan-repayment 100000 7.5 60
-
-=== Precision ===
-- mathguru divide 10 3 --precision 2
-- mathguru sqrt 2 --precision 5
 
 Interactive Mode:
 - Run 'mathguru' with no arguments to open the interactive terminal menu.

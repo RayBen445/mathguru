@@ -1,6 +1,14 @@
 const mathguru = require('../../index');
 const { parseNumber, parseNumberList } = require('./validation');
 const { evaluateExpression } = require('../parser/expressionParser');
+const {
+  list: listFormulas,
+  get: getFormula,
+  search: searchFormulas,
+  explain: explainFormula,
+  getCategories,
+  formatFormulaSummary,
+} = require('../formulas/formulaEngine');
 
 const COMMAND_ALIASES = {
   plus: 'add',
@@ -13,7 +21,50 @@ const COMMAND_ALIASES = {
   si: 'simple-interest',
   ci: 'compound-interest',
   loan: 'loan-repayment',
+  plot: 'graph',
 };
+
+function parseGraphArgs(rawArgs) {
+  const args = [...rawArgs];
+  const expression = args.shift();
+  const options = {};
+
+  while (args.length > 0) {
+    const token = args.shift();
+    if (token === '--size') {
+      options.size = args.shift();
+    } else if (token === '--format') {
+      options.format = args.shift();
+    }
+  }
+
+  return { expression, options };
+}
+
+function executeFormulaCommand(rawArgs) {
+  if (rawArgs.length === 0) {
+    return `Available formula categories:\n${getCategories().map((item) => `- ${item}`).join('\n')}`;
+  }
+
+  if (rawArgs[0] === 'search') {
+    const query = rawArgs.slice(1).join(' ');
+    const results = searchFormulas(query);
+    return `Formula search results for '${query}':\n${formatFormulaSummary(results.slice(0, 10))}`;
+  }
+
+  const [category, maybeFormula] = rawArgs;
+  if (!maybeFormula) {
+    const items = listFormulas(category);
+    return `Formulas in ${category}:\n${formatFormulaSummary(items)}`;
+  }
+
+  const formula = getFormula(maybeFormula, category);
+  if (!formula) {
+    throw new Error(`formula: no formula named '${maybeFormula}' in category '${category}'.`);
+  }
+
+  return explainFormula(maybeFormula, { category });
+}
 
 const COMMANDS = {
   add: {
@@ -160,7 +211,70 @@ const COMMANDS = {
     label: 'Evaluate Expression',
     usage: 'mathguru eval "sqrt(25) + 5"',
     args: ['expression'],
+    variadic: true,
     execute: (rawArgs) => evaluateExpression(rawArgs.join(' ')),
+  },
+  calc: {
+    category: 'Symbolic Math',
+    label: 'Symbolic Calculator',
+    usage: 'mathguru calc "integrate(sin(x))"',
+    args: ['expression'],
+    variadic: true,
+    execute: (rawArgs) => mathguru.calc.run(rawArgs.join(' ')),
+  },
+  graph: {
+    category: 'Graphing',
+    label: 'Graph Function',
+    usage: 'mathguru graph "sin(x)" [--format ascii|svg|png] [--size 80x20]',
+    args: ['expression', 'options...'],
+    variadic: true,
+    execute: (rawArgs) => {
+      const { expression, options } = parseGraphArgs(rawArgs);
+      if (!expression) {
+        throw new Error('graph: expression is required.');
+      }
+      if (options.format && ['svg', 'png'].includes(String(options.format).toLowerCase())) {
+        const filePath = mathguru.graph.export(expression, options);
+        return `Graph exported to ${filePath}`;
+      }
+      return mathguru.graph.plot(expression, options);
+    },
+  },
+  latex: {
+    category: 'LaTeX',
+    label: 'LaTeX Converter',
+    usage: 'mathguru latex "sin(x)^2 + cos(x)^2"',
+    args: ['expression'],
+    variadic: true,
+    execute: (rawArgs) => mathguru.latex.convert(rawArgs.join(' ')),
+  },
+  formula: {
+    category: 'Formula Engine',
+    label: 'Formula Browser',
+    usage: 'mathguru formula economics cobb-douglas',
+    args: ['category|search', 'formula-or-query...'],
+    variadic: true,
+    execute: (rawArgs) => executeFormulaCommand(rawArgs),
+  },
+  search: {
+    category: 'Formula Engine',
+    label: 'Formula Search',
+    usage: 'mathguru search derivative',
+    args: ['query'],
+    variadic: true,
+    execute: (rawArgs) => {
+      const query = rawArgs.join(' ');
+      const results = searchFormulas(query);
+      return `Search results for '${query}':\n${formatFormulaSummary(results.slice(0, 10))}`;
+    },
+  },
+  explain: {
+    category: 'Formula Engine',
+    label: 'Formula Explanation',
+    usage: 'mathguru explain cobb-douglas',
+    args: ['formula'],
+    variadic: true,
+    execute: (rawArgs) => explainFormula(rawArgs.join(' ')),
   },
 };
 
@@ -178,7 +292,7 @@ function executeCommand(command, rawArgs) {
 
   if (definition.variadic) {
     if (rawArgs.length === 0) {
-      throw new Error(`${resolved}: expected at least one numeric argument.`);
+      throw new Error(`${resolved}: expected at least one argument.`);
     }
   } else if (rawArgs.length !== definition.args.length) {
     throw new Error(
@@ -190,7 +304,16 @@ function executeCommand(command, rawArgs) {
 }
 
 function getCategoryChoices() {
-  const categories = { 'Basic Math': [], 'Scientific Math': [], Economics: [], Finance: [] };
+  const categories = {
+    'Basic Math': [],
+    'Scientific Math': [],
+    Economics: [],
+    Finance: [],
+    'Symbolic Math': [],
+    Graphing: [],
+    LaTeX: [],
+    'Formula Engine': [],
+  };
   Object.entries(COMMANDS).forEach(([command, definition]) => {
     if (categories[definition.category]) {
       categories[definition.category].push({ name: definition.label, value: command });
