@@ -3,143 +3,145 @@
 [![npm version](https://img.shields.io/npm/v/mathguru.svg)](https://www.npmjs.com/package/mathguru)
 [![license](https://img.shields.io/npm/l/mathguru.svg)](LICENSE)
 
-A beginner-friendly math utility package for Node.js. Perform common arithmetic operations — addition, subtraction, multiplication, division, and squaring — with clean, well-documented functions.
+A professional, beginner-friendly Node.js utility for **math**, **economics**, and **finance** calculations.
+
+## Version
+
+Current package version: **1.1.0**
 
 ---
 
 ## Installation
 
+### Library usage
+
 ```bash
 npm install mathguru
 ```
 
+### Global CLI usage
+
+```bash
+npm install -g mathguru
+```
+
+### Local CLI testing (development)
+
+```bash
+npm link
+```
+
 ---
 
-## Usage
+## Usage (JavaScript)
 
 ```js
 const mathguru = require('mathguru');
 
-console.log(mathguru.add(3, 5));        // 8
-console.log(mathguru.subtract(10, 4));  // 6
-console.log(mathguru.multiply(4, 3));   // 12
-console.log(mathguru.divide(10, 2));    // 5
-console.log(mathguru.square(5));        // 25
-```
-
-You can also import individual functions using destructuring:
-
-```js
-const { add, subtract, multiply, divide, square } = require('mathguru');
-
-add(2, 3);       // 5
-subtract(9, 4);  // 5
-multiply(3, 4);  // 12
-divide(10, 2);   // 5
-square(6);       // 36
+console.log(mathguru.add(2, 3));
+console.log(mathguru.sqrt(25));
+console.log(mathguru.simpleInterest(1000, 5, 2));
 ```
 
 ---
 
-## Functions
+## Usage (CLI)
 
-### `add(a, b)`
-
-Returns the **sum** of two numbers.
-
-| Parameter | Type   | Description        |
-|-----------|--------|--------------------|
-| `a`       | number | The first number   |
-| `b`       | number | The second number  |
-
-```js
-add(2, 3); // 5
+```bash
+mathguru add 2 3
+mathguru subtract 10 4
+mathguru multiply 5 6
+mathguru divide 20 4
+mathguru square 5
+mathguru factorial 5
+mathguru sqrt 25
+mathguru percentage 20 100
+mathguru simple-interest 1000 5 2
+mathguru compound-interest 1000 5 2 12
+mathguru inflation 500 700
+mathguru gdp-growth 10000 12000
+mathguru help
+mathguru version
 ```
 
 ---
 
-### `subtract(a, b)`
+## API Documentation
 
-Returns the **difference** between two numbers (`a - b`).
+### Basic Functions
 
-| Parameter | Type   | Description               |
-|-----------|--------|---------------------------|
-| `a`       | number | The number to subtract from |
-| `b`       | number | The number to subtract    |
+- `add(a, b)` → sum of two numbers.
+- `subtract(a, b)` → difference (`a - b`).
+- `multiply(a, b)` → product of two numbers.
+- `divide(a, b)` → quotient (`a / b`), throws on divide-by-zero.
+- `square(x)` → square of a number.
+
+### Scientific Functions
+
+- `sqrt(x)` → square root of a non-negative number.
+- `power(base, exponent)` → raises `base` to `exponent`.
+- `factorial(n)` → factorial of a non-negative integer.
+- `percentage(value, total)` → percentage of `value` in `total`.
+- `modulus(a, b)` → remainder of `a % b`.
+- `average(array)` → arithmetic mean of an array of numbers.
+
+### Economics & Finance Functions
+
+- `simpleInterest(principal, rate, time)`
+- `compoundInterest(principal, rate, time, frequency)`
+- `inflationRate(oldPrice, newPrice)`
+- `gdpGrowth(oldGDP, newGDP)`
+- `loanRepayment(principal, annualRate, months)`
+
+---
+
+## Economics Examples
 
 ```js
-subtract(10, 4); // 6
+const {
+  simpleInterest,
+  compoundInterest,
+  inflationRate,
+  gdpGrowth,
+  loanRepayment,
+} = require('mathguru');
+
+console.log(simpleInterest(1000, 5, 2));         // 100
+console.log(compoundInterest(1000, 5, 2, 12));   // 104.94133555832692
+console.log(inflationRate(500, 700));            // 40
+console.log(gdpGrowth(10000, 12000));            // 20
+console.log(loanRepayment(100000, 7.5, 60));     // 2003.7948595213268
 ```
 
 ---
 
-### `multiply(a, b)`
+## Input Validation & Error Handling
 
-Returns the **product** of two numbers.
+All functions validate required arguments and numeric input.
 
-| Parameter | Type   | Description        |
-|-----------|--------|--------------------|
-| `a`       | number | The first number   |
-| `b`       | number | The second number  |
+Examples of validation errors:
 
-```js
-multiply(4, 3); // 12
-```
+- missing arguments
+- invalid numbers (`NaN`, `Infinity`, non-number types)
+- divide-by-zero conditions
+- empty arrays for `average`
 
 ---
 
-### `divide(a, b)`
+## CommonJS Compatibility
 
-Returns the **quotient** of two numbers (`a / b`).
+This package is fully CommonJS-compatible:
 
-> ⚠️ Throws an `Error` if `b` is `0`.
-
-| Parameter | Type   | Description                        |
-|-----------|--------|------------------------------------|
-| `a`       | number | The dividend (number to divide)    |
-| `b`       | number | The divisor (must not be zero)     |
-
-```js
-divide(10, 2); // 5
-
-// Division by zero
-try {
-  divide(5, 0);
-} catch (err) {
-  console.error(err.message); // 'Division by zero is not allowed.'
-}
-```
+- uses `require()` imports
+- uses `module.exports` exports
 
 ---
 
-### `square(x)`
+## Run Tests
 
-Returns the **square** of a number (`x * x`).
-
-| Parameter | Type   | Description           |
-|-----------|--------|-----------------------|
-| `x`       | number | The number to square  |
-
-```js
-square(5); // 25
-square(3); // 9
+```bash
+npm test
 ```
-
----
-
-## Error Handling
-
-`divide(a, b)` will throw an `Error` when the divisor `b` is `0`:
-
-```js
-try {
-  mathguru.divide(10, 0);
-} catch (err) {
-  console.error(err.message); // 'Division by zero is not allowed.'
-}
-```
-
-Always wrap `divide` calls in a `try/catch` block when the divisor is user-supplied.
 
 ---
 

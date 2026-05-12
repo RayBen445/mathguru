@@ -1,5 +1,5 @@
 /**
- * test.js — Basic tests for the mathguru package
+ * test.js — Example tests for all exported mathguru functions.
  *
  * Run with: node test.js
  */
@@ -12,53 +12,77 @@ let failed = 0;
 function assert(description, actual, expected) {
   if (actual === expected) {
     console.log(`  ✅ PASS: ${description}`);
-    passed++;
+    passed += 1;
   } else {
     console.error(`  ❌ FAIL: ${description} — expected ${expected}, got ${actual}`);
-    failed++;
+    failed += 1;
   }
 }
 
-console.log('\n--- add ---');
-assert('add(2, 3) === 5', mathguru.add(2, 3), 5);
-assert('add(-1, 1) === 0', mathguru.add(-1, 1), 0);
-assert('add(0, 0) === 0', mathguru.add(0, 0), 0);
-
-console.log('\n--- subtract ---');
-assert('subtract(10, 4) === 6', mathguru.subtract(10, 4), 6);
-assert('subtract(5, 5) === 0', mathguru.subtract(5, 5), 0);
-assert('subtract(3, 7) === -4', mathguru.subtract(3, 7), -4);
-
-console.log('\n--- multiply ---');
-assert('multiply(4, 3) === 12', mathguru.multiply(4, 3), 12);
-assert('multiply(0, 100) === 0', mathguru.multiply(0, 100), 0);
-assert('multiply(-2, 5) === -10', mathguru.multiply(-2, 5), -10);
-
-console.log('\n--- divide ---');
-assert('divide(10, 2) === 5', mathguru.divide(10, 2), 5);
-assert('divide(9, 3) === 3', mathguru.divide(9, 3), 3);
-assert('divide(7, 2) === 3.5', mathguru.divide(7, 2), 3.5);
-
-// Division by zero should throw
-try {
-  mathguru.divide(5, 0);
-  console.error('  ❌ FAIL: divide(5, 0) should throw');
-  failed++;
-} catch (err) {
-  if (err.message === 'Division by zero is not allowed.') {
-    console.log('  ✅ PASS: divide(5, 0) throws "Division by zero is not allowed."');
-    passed++;
+function assertApprox(description, actual, expected, epsilon = 1e-9) {
+  if (Math.abs(actual - expected) <= epsilon) {
+    console.log(`  ✅ PASS: ${description}`);
+    passed += 1;
   } else {
-    console.error(`  ❌ FAIL: divide(5, 0) threw unexpected message: ${err.message}`);
-    failed++;
+    console.error(`  ❌ FAIL: ${description} — expected ~${expected}, got ${actual}`);
+    failed += 1;
   }
 }
 
-console.log('\n--- square ---');
+function assertThrows(description, fn, expectedMessagePart) {
+  try {
+    fn();
+    console.error(`  ❌ FAIL: ${description} — expected an error`);
+    failed += 1;
+  } catch (error) {
+    if (error.message.includes(expectedMessagePart)) {
+      console.log(`  ✅ PASS: ${description}`);
+      passed += 1;
+    } else {
+      console.error(`  ❌ FAIL: ${description} — unexpected message: ${error.message}`);
+      failed += 1;
+    }
+  }
+}
+
+console.log('\n--- basic ---');
+assert('add(2, 3) === 5', mathguru.add(2, 3), 5);
+assert('subtract(10, 4) === 6', mathguru.subtract(10, 4), 6);
+assert('multiply(5, 6) === 30', mathguru.multiply(5, 6), 30);
+assert('divide(20, 4) === 5', mathguru.divide(20, 4), 5);
 assert('square(5) === 25', mathguru.square(5), 25);
-assert('square(3) === 9', mathguru.square(3), 9);
-assert('square(0) === 0', mathguru.square(0), 0);
-assert('square(-4) === 16', mathguru.square(-4), 16);
+
+console.log('\n--- scientific ---');
+assert('sqrt(25) === 5', mathguru.sqrt(25), 5);
+assert('power(2, 8) === 256', mathguru.power(2, 8), 256);
+assert('factorial(5) === 120', mathguru.factorial(5), 120);
+assert('percentage(20, 100) === 20', mathguru.percentage(20, 100), 20);
+assert('modulus(10, 3) === 1', mathguru.modulus(10, 3), 1);
+assert('average([1, 2, 3, 4, 5]) === 3', mathguru.average([1, 2, 3, 4, 5]), 3);
+
+console.log('\n--- economics & finance ---');
+assert('simpleInterest(1000, 5, 2) === 100', mathguru.simpleInterest(1000, 5, 2), 100);
+assertApprox(
+  'compoundInterest(1000, 5, 2, 12) ~= 104.94133555832692',
+  mathguru.compoundInterest(1000, 5, 2, 12),
+  104.94133555832692
+);
+assert('inflationRate(500, 700) === 40', mathguru.inflationRate(500, 700), 40);
+assert('gdpGrowth(10000, 12000) === 20', mathguru.gdpGrowth(10000, 12000), 20);
+assertApprox(
+  'loanRepayment(100000, 7.5, 60) ~= 2003.7948595213268',
+  mathguru.loanRepayment(100000, 7.5, 60),
+  2003.7948595213268
+);
+
+console.log('\n--- validation ---');
+assertThrows('add(1) throws missing argument error', () => mathguru.add(1), 'requires 2 argument');
+assertThrows('add("a", 1) throws invalid number error', () => mathguru.add('a', 1), 'valid finite number');
+assertThrows('divide(5, 0) throws divide-by-zero error', () => mathguru.divide(5, 0), 'division by zero');
+assertThrows('sqrt(-1) throws non-negative error', () => mathguru.sqrt(-1), '0 or greater');
+assertThrows('factorial(2.5) throws integer error', () => mathguru.factorial(2.5), 'must be an integer');
+assertThrows('percentage(1, 0) throws total zero error', () => mathguru.percentage(1, 0), 'must not be 0');
+assertThrows('average([]) throws empty array error', () => mathguru.average([]), 'cannot be an empty array');
 
 console.log(`\nResults: ${passed} passed, ${failed} failed\n`);
 

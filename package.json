@@ -1,8 +1,11 @@
 {
   "name": "mathguru",
-  "version": "1.0.0",
-  "description": "A beginner-friendly math utility package for Node.js — add, subtract, multiply, divide, and square numbers with ease.",
+  "version": "1.1.0",
+  "description": "A modular math, economics, and finance utility library with a beginner-friendly Node.js CLI.",
   "main": "index.js",
+  "bin": {
+    "mathguru": "./bin/mathguru.js"
+  },
   "scripts": {
     "test": "node test.js"
   },
@@ -10,7 +13,10 @@
     "math",
     "calculator",
     "arithmetic",
-    "beginner",
+    "scientific",
+    "economics",
+    "finance",
+    "cli",
     "utility"
   ],
   "author": "RayBen445",
