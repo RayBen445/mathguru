@@ -9,11 +9,20 @@ if (!tag) {
 }
 
 const version = tag.replace(/^v/, '');
+if (!/^\d+\.\d+\.\d+$/.test(version)) {
+  throw new Error(`Invalid version tag: ${tag}`);
+}
+
+function escapeRegExp(text) {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 const changelogPath = path.join(process.cwd(), 'CHANGELOG.md');
 const outputPath = path.join(process.cwd(), 'release-notes.md');
 const changelog = fs.readFileSync(changelogPath, 'utf8');
 
-const pattern = new RegExp(`## \\[${version}\\][\\s\\S]*?(?=\\n## \\[|$)`, 'm');
+const safeVersion = escapeRegExp(version);
+const pattern = new RegExp(`## \\[${safeVersion}\\][\\s\\S]*?(?=\\n## \\[|$)`, 'm');
 const match = changelog.match(pattern);
 
 const summary = [
