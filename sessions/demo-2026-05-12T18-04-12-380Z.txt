@@ -1,5 +1,0 @@
-Session: demo
-Created: 2026-05-12T18:04:12.378Z
-Powered by Kontyra
-
-[2026-05-12T18:04:12.377Z] add(1, 2) => 3

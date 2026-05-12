@@ -3,10 +3,13 @@
 **Powered by Kontyra**
 
 [![npm version](https://img.shields.io/npm/v/mathguru.svg)](https://www.npmjs.com/package/mathguru)
+[![GitHub release](https://img.shields.io/github/v/release/RayBen445/mathguru)](https://github.com/RayBen445/mathguru/releases)
+[![npm downloads](https://img.shields.io/npm/dm/mathguru.svg)](https://www.npmjs.com/package/mathguru)
+[![CI](https://github.com/RayBen445/mathguru/actions/workflows/test.yml/badge.svg)](https://github.com/RayBen445/mathguru/actions/workflows/test.yml)
+[![lint](https://github.com/RayBen445/mathguru/actions/workflows/lint.yml/badge.svg)](https://github.com/RayBen445/mathguru/actions/workflows/lint.yml)
 [![license](https://img.shields.io/npm/l/mathguru.svg)](LICENSE)
-[![tests](https://img.shields.io/badge/tests-jest-brightgreen)](#testing)
 
-MathGuru is a polished ecosystem-grade developer terminal toolkit for mathematics, scientific workflows, economics, and finance.
+MathGuru is a professionally engineered open-source Node.js ecosystem for mathematics, economics, finance, exports, session tooling, and terminal workflows.
 
 ---
 
@@ -14,11 +17,6 @@ MathGuru is a polished ecosystem-grade developer terminal toolkit for mathematic
 
 ```bash
 npm install mathguru
-```
-
-Global CLI:
-
-```bash
 npm install -g mathguru
 ```
 
@@ -33,17 +31,13 @@ mg sqrt 25
 
 ## Kontyra Branding
 
-MathGuru is delivered as a **Kontyra** product and includes:
-- startup banner branding
-- help/docs branding
-- terminal footer branding
-- package metadata branding
-
-Display text:
+MathGuru is maintained as a Kontyra product with consistent terminal and documentation branding:
 
 ```text
 Powered by Kontyra
 ```
+
+Included in startup banner, help/docs, package metadata, README, and terminal footer.
 
 ---
 
@@ -54,24 +48,18 @@ mathguru add 2 3
 mathguru divide 10 3 --precision 2
 mathguru inflation 500 700
 mathguru eval "sqrt(25) + 5"
+mathguru help
 ```
 
 ---
 
-## Shell Mode
+## Shell Examples
 
 ```bash
 mathguru shell
 ```
 
-Shell features:
-- persistent command session
-- command history
-- `help`, `clear`, `stats`, `exit`
-- colorful prompts
-- session statistics
-
-Example:
+Inside shell:
 
 ```text
 mathguru> add 2 3
@@ -79,44 +67,39 @@ mathguru> add 2 3
 
 mathguru> inflation 500 700
 40
+
+mathguru> stats
 ```
 
 ---
 
-## Session Management
+## SDK Examples (CommonJS)
 
-```bash
-mathguru save-session
-mathguru save-session workday
-mathguru load-session workday
-mathguru export-session markdown workday
+```js
+const mathguru = require('mathguru');
+
+console.log(mathguru.add(2, 3));
+console.log(mathguru.sqrt(25));
+console.log(mathguru.compoundInterest(1000, 5, 2, 12));
+console.log(mathguru.evaluateExpression('sqrt(25) + 5'));
 ```
 
-Session data includes:
-- command history
-- timestamps
-- results
-
-Stored in:
-- `sessions/`
-
-Supported session export formats:
-- JSON
-- TXT
-- Markdown
+Type definitions are available via `types/index.d.ts`.
 
 ---
 
-## History and Exports
-
-History commands:
+## Formula Engine Examples
 
 ```bash
-mathguru history
-mathguru clear-history
+mathguru eval "5 * (10 + 2)"
+mathguru eval "sqrt(25) + 5"
+mathguru eval "50% * 200"
+mathguru eval "2^8"
 ```
 
-Export commands:
+---
+
+## Export Examples
 
 ```bash
 mathguru export history json
@@ -124,112 +107,92 @@ mathguru export history markdown
 mathguru export result csv
 ```
 
-Supported export formats:
-- JSON
-- CSV
-- TXT
-- Markdown
-
-Stored in:
-- `exports/`
+Formats: JSON, CSV, TXT, Markdown.
 
 ---
 
-## Config System
+## Session Examples
 
 ```bash
-mathguru config
-mathguru config get precision
-mathguru config set precision 2
-mathguru config set colors false
-mathguru config set shellStartup true
-mathguru config set exportFormat markdown
+mathguru save-session
+mathguru save-session sprint-review
+mathguru load-session sprint-review
+mathguru export-session markdown sprint-review
 ```
 
-Config options:
-- decimal precision
-- colors on/off
-- shell startup behavior
-- default export format
-- currency symbol
-
-Stored locally in user config storage and defaults from project `config.json`.
+Sessions are stored in `sessions/`.
 
 ---
 
-## Offline Documentation
+## Professional Engineering Workflow
+
+### CI/CD Workflows
+
+- `.github/workflows/test.yml` → tests + legacy tests + typings validation
+- `.github/workflows/lint.yml` → lint + format checks + audit
+- `.github/workflows/release.yml` → tagged release automation + release notes
+- `.github/workflows/npm-publish.yml` → publish to npm on GitHub release
+
+### Semantic Versioning
+
+- PATCH = bug fixes
+- MINOR = new features
+- MAJOR = breaking changes
+
+Helper scripts:
 
 ```bash
-mathguru docs
-mathguru help
+npm run release:patch
+npm run release:minor
+npm run release:major
 ```
 
-Includes:
-- command categories
-- examples
-- economics docs
-- finance docs
-- shell docs
-- export docs
+### Changelog Automation
 
----
-
-## Plugin-Ready Architecture
-
-Plugin foundation is available in `src/plugins/`.
-
-Prepared for future extensions:
-- statistics plugins
-- graphing plugins
-- engineering formula plugins
-- future AI support architecture (**no AI implementation yet**)
-
----
-
-## Advanced Terminal UX
-
-Built with:
-- `chalk`
-- `figlet`
-- `ora`
-- `inquirer`
-
-Provides:
-- loading spinners
-- section dividers
-- clean spacing
-- styled success/error/info output
-
----
-
-## SDK Usage (CommonJS)
-
-```js
-const mathguru = require('mathguru');
-
-console.log(mathguru.add(2, 3));
-console.log(mathguru.sqrt(81));
-console.log(mathguru.compoundInterest(1000, 5, 2, 12));
-console.log(mathguru.evaluateExpression('sqrt(25) + 5'));
+```bash
+npm run changelog
 ```
 
-Type definitions are available via `types/index.d.ts` for autocomplete.
+Maintains `CHANGELOG.md` from commit history.
+
+### Pre-publish Validation
+
+```bash
+npm run prepublish:check
+```
+
+Runs lint, formatting checks, tests, typecheck, package validation, and tarball dry-run.
 
 ---
 
-## Screenshots / Terminal Example
+## Documentation
 
-```text
-================================================
-   __  __       _   _      _____ _      ___
-  |  \/  | __ _| |_| |__  |  ___| |    |_ _|
-  | |\/| |/ _` | __| '_ \ | |_  | |     | |
-  | |  | | (_| | |_| | | ||  _| | |___  | |
-  |_|  |_|\__,_|\__|_| |_||_|   |_____| |___|
+See `docs/`:
 
-Powered by Kontyra
-================================================
-```
+- `docs/installation.md`
+- `docs/cli.md`
+- `docs/sdk.md`
+- `docs/formulas.md`
+- `docs/contributing.md`
+- `docs/releases.md`
+
+Release process details: `RELEASE.md`.
+
+---
+
+## Contribution Guide
+
+Please read:
+
+- `CONTRIBUTING.md`
+- `CODE_OF_CONDUCT.md`
+- `SECURITY.md`
+
+Branch strategy:
+
+- `main`
+- `dev`
+- `feature/*`
 
 ---
 
@@ -237,59 +200,26 @@ Powered by Kontyra
 
 ```text
 mathguru/
+├── .github/workflows/
 ├── bin/
+├── docs/
 ├── src/
-│   ├── basic/
-│   ├── scientific/
-│   ├── economics/
-│   ├── finance/
-│   ├── cli/
-│   ├── shell/
-│   ├── parser/
-│   ├── config/
-│   ├── history/
-│   ├── export/
-│   ├── plugins/
-│   └── utils/
+├── tests/
 ├── exports/
 ├── sessions/
-├── tests/
 ├── types/
-├── README.md
+├── .gitignore
+├── .npmignore
 ├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
+├── SECURITY.md
 ├── LICENSE
+├── RELEASE.md
+├── README.md
 ├── package.json
 └── test.js
 ```
-
----
-
-## Testing
-
-```bash
-npm test
-npm run test:legacy
-```
-
-Jest covers:
-- CLI commands
-- shell mode
-- exports
-- configs
-- history
-- parser
-- precision system
-- session management
-
----
-
-## Contributing
-
-1. Fork the repository.
-2. Create a feature branch.
-3. Add/update tests for changes.
-4. Run full test suite.
-5. Open a pull request.
 
 ---
 

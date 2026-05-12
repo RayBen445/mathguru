@@ -26,9 +26,17 @@ export interface MathGuruConfig {
 }
 
 export function readConfig(): MathGuruConfig;
-export function setConfigValue(key: keyof MathGuruConfig, value: string | number | boolean): string | number | boolean;
+export function setConfigValue(
+  key: keyof MathGuruConfig,
+  value: string | number | boolean
+): string | number | boolean;
 export function getConfigValue(key?: keyof MathGuruConfig): MathGuruConfig | string | number | boolean;
-export function readHistory(): Array<{ command: string; inputs: string[]; result: number; timestamp: string }>;
+export function readHistory(): Array<{
+  command: string;
+  inputs: string[];
+  result: number;
+  timestamp: string;
+}>;
 export function clearHistory(): void;
 export function registerPlugin(plugin: { name: string; version?: string; description?: string }): void;
 export function listPlugins(): Array<{ name: string; version: string; description: string }>;

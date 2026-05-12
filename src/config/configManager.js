@@ -29,7 +29,7 @@ function readConfig() {
   try {
     const parsed = JSON.parse(fs.readFileSync(CONFIG_PATH, 'utf8'));
     return { ...DEFAULT_CONFIG, ...parsed };
-  } catch (_error) {
+  } catch {
     return { ...DEFAULT_CONFIG };
   }
 }

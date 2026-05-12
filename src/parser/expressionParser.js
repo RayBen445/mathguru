@@ -120,7 +120,8 @@ function toRpn(tokens) {
     }
 
     if (token.type === 'operator' && '+-*/^'.includes(token.value)) {
-      const isUnaryMinus = token.value === '-' && (prevType === 'start' || prevType === 'operator' || prevType === 'lparen');
+      const isUnaryMinus =
+        token.value === '-' && (prevType === 'start' || prevType === 'operator' || prevType === 'lparen');
       if (isUnaryMinus) {
         output.push({ type: 'number', value: 0 });
       }

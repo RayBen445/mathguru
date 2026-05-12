@@ -13,7 +13,9 @@ function ensureSessionsDir() {
 }
 
 function sanitizeName(name) {
-  return String(name || 'session').replace(/[^a-zA-Z0-9-_]/g, '-').toLowerCase();
+  return String(name || 'session')
+    .replace(/[^a-zA-Z0-9-_]/g, '-')
+    .toLowerCase();
 }
 
 function createSessionPayload(entries, name) {
@@ -103,7 +105,9 @@ function toMarkdown(payload) {
   ];
 
   payload.entries.forEach((entry) => {
-    lines.push(`| ${entry.timestamp} | ${entry.command} | ${JSON.stringify(entry.inputs || [])} | ${entry.result} |`);
+    lines.push(
+      `| ${entry.timestamp} | ${entry.command} | ${JSON.stringify(entry.inputs || [])} | ${entry.result} |`
+    );
   });
 
   return lines.join('\n');

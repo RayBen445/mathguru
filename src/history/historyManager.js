@@ -19,7 +19,7 @@ function readHistory() {
   try {
     const parsed = JSON.parse(fs.readFileSync(HISTORY_PATH, 'utf8'));
     return Array.isArray(parsed) ? parsed : [];
-  } catch (_error) {
+  } catch {
     return [];
   }
 }

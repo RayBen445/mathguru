@@ -21,28 +21,32 @@ const COMMANDS = {
     label: 'Add',
     usage: 'mathguru add 2 3',
     args: ['a', 'b'],
-    execute: (rawArgs) => mathguru.add(parseNumber(rawArgs[0], 'a', 'add'), parseNumber(rawArgs[1], 'b', 'add')),
+    execute: (rawArgs) =>
+      mathguru.add(parseNumber(rawArgs[0], 'a', 'add'), parseNumber(rawArgs[1], 'b', 'add')),
   },
   subtract: {
     category: 'Basic Math',
     label: 'Subtract',
     usage: 'mathguru subtract 10 4',
     args: ['a', 'b'],
-    execute: (rawArgs) => mathguru.subtract(parseNumber(rawArgs[0], 'a', 'subtract'), parseNumber(rawArgs[1], 'b', 'subtract')),
+    execute: (rawArgs) =>
+      mathguru.subtract(parseNumber(rawArgs[0], 'a', 'subtract'), parseNumber(rawArgs[1], 'b', 'subtract')),
   },
   multiply: {
     category: 'Basic Math',
     label: 'Multiply',
     usage: 'mathguru multiply 5 6',
     args: ['a', 'b'],
-    execute: (rawArgs) => mathguru.multiply(parseNumber(rawArgs[0], 'a', 'multiply'), parseNumber(rawArgs[1], 'b', 'multiply')),
+    execute: (rawArgs) =>
+      mathguru.multiply(parseNumber(rawArgs[0], 'a', 'multiply'), parseNumber(rawArgs[1], 'b', 'multiply')),
   },
   divide: {
     category: 'Basic Math',
     label: 'Divide',
     usage: 'mathguru divide 20 4',
     args: ['a', 'b'],
-    execute: (rawArgs) => mathguru.divide(parseNumber(rawArgs[0], 'a', 'divide'), parseNumber(rawArgs[1], 'b', 'divide')),
+    execute: (rawArgs) =>
+      mathguru.divide(parseNumber(rawArgs[0], 'a', 'divide'), parseNumber(rawArgs[1], 'b', 'divide')),
   },
   square: {
     category: 'Basic Math',
@@ -63,7 +67,8 @@ const COMMANDS = {
     label: 'Power',
     usage: 'mathguru power 2 8',
     args: ['base', 'exponent'],
-    execute: (rawArgs) => mathguru.power(parseNumber(rawArgs[0], 'base', 'power'), parseNumber(rawArgs[1], 'exponent', 'power')),
+    execute: (rawArgs) =>
+      mathguru.power(parseNumber(rawArgs[0], 'base', 'power'), parseNumber(rawArgs[1], 'exponent', 'power')),
   },
   sqrt: {
     category: 'Scientific Math',
@@ -85,42 +90,70 @@ const COMMANDS = {
     label: 'Percentage',
     usage: 'mathguru percentage 20 100',
     args: ['value', 'total'],
-    execute: (rawArgs) => mathguru.percentage(parseNumber(rawArgs[0], 'value', 'percentage'), parseNumber(rawArgs[1], 'total', 'percentage')),
+    execute: (rawArgs) =>
+      mathguru.percentage(
+        parseNumber(rawArgs[0], 'value', 'percentage'),
+        parseNumber(rawArgs[1], 'total', 'percentage')
+      ),
   },
   inflation: {
     category: 'Economics',
     label: 'Inflation Rate',
     usage: 'mathguru inflation 500 700',
     args: ['oldPrice', 'newPrice'],
-    execute: (rawArgs) => mathguru.inflationRate(parseNumber(rawArgs[0], 'oldPrice', 'inflation'), parseNumber(rawArgs[1], 'newPrice', 'inflation')),
+    execute: (rawArgs) =>
+      mathguru.inflationRate(
+        parseNumber(rawArgs[0], 'oldPrice', 'inflation'),
+        parseNumber(rawArgs[1], 'newPrice', 'inflation')
+      ),
   },
   'gdp-growth': {
     category: 'Economics',
     label: 'GDP Growth',
     usage: 'mathguru gdp-growth 10000 12000',
     args: ['oldGDP', 'newGDP'],
-    execute: (rawArgs) => mathguru.gdpGrowth(parseNumber(rawArgs[0], 'oldGDP', 'gdp-growth'), parseNumber(rawArgs[1], 'newGDP', 'gdp-growth')),
+    execute: (rawArgs) =>
+      mathguru.gdpGrowth(
+        parseNumber(rawArgs[0], 'oldGDP', 'gdp-growth'),
+        parseNumber(rawArgs[1], 'newGDP', 'gdp-growth')
+      ),
   },
   'simple-interest': {
     category: 'Finance',
     label: 'Simple Interest',
     usage: 'mathguru simple-interest 1000 5 2',
     args: ['principal', 'rate', 'time'],
-    execute: (rawArgs) => mathguru.simpleInterest(parseNumber(rawArgs[0], 'principal', 'simple-interest'), parseNumber(rawArgs[1], 'rate', 'simple-interest'), parseNumber(rawArgs[2], 'time', 'simple-interest')),
+    execute: (rawArgs) =>
+      mathguru.simpleInterest(
+        parseNumber(rawArgs[0], 'principal', 'simple-interest'),
+        parseNumber(rawArgs[1], 'rate', 'simple-interest'),
+        parseNumber(rawArgs[2], 'time', 'simple-interest')
+      ),
   },
   'compound-interest': {
     category: 'Finance',
     label: 'Compound Interest',
     usage: 'mathguru compound-interest 1000 5 2 12',
     args: ['principal', 'rate', 'time', 'frequency'],
-    execute: (rawArgs) => mathguru.compoundInterest(parseNumber(rawArgs[0], 'principal', 'compound-interest'), parseNumber(rawArgs[1], 'rate', 'compound-interest'), parseNumber(rawArgs[2], 'time', 'compound-interest'), parseNumber(rawArgs[3], 'frequency', 'compound-interest')),
+    execute: (rawArgs) =>
+      mathguru.compoundInterest(
+        parseNumber(rawArgs[0], 'principal', 'compound-interest'),
+        parseNumber(rawArgs[1], 'rate', 'compound-interest'),
+        parseNumber(rawArgs[2], 'time', 'compound-interest'),
+        parseNumber(rawArgs[3], 'frequency', 'compound-interest')
+      ),
   },
   'loan-repayment': {
     category: 'Finance',
     label: 'Loan Repayment',
     usage: 'mathguru loan-repayment 100000 7.5 60',
     args: ['principal', 'annualRate', 'months'],
-    execute: (rawArgs) => mathguru.loanRepayment(parseNumber(rawArgs[0], 'principal', 'loan-repayment'), parseNumber(rawArgs[1], 'annualRate', 'loan-repayment'), parseNumber(rawArgs[2], 'months', 'loan-repayment')),
+    execute: (rawArgs) =>
+      mathguru.loanRepayment(
+        parseNumber(rawArgs[0], 'principal', 'loan-repayment'),
+        parseNumber(rawArgs[1], 'annualRate', 'loan-repayment'),
+        parseNumber(rawArgs[2], 'months', 'loan-repayment')
+      ),
   },
   eval: {
     category: 'Scientific Math',
@@ -148,7 +181,9 @@ function executeCommand(command, rawArgs) {
       throw new Error(`${resolved}: expected at least one numeric argument.`);
     }
   } else if (rawArgs.length !== definition.args.length) {
-    throw new Error(`${resolved}: expected ${definition.args.length} argument(s), but received ${rawArgs.length}.`);
+    throw new Error(
+      `${resolved}: expected ${definition.args.length} argument(s), but received ${rawArgs.length}.`
+    );
   }
 
   return definition.execute(rawArgs);

@@ -40,15 +40,10 @@ function printTable(rows) {
 
   const headers = Object.keys(rows[0]);
   const widths = headers.map((header) =>
-    Math.max(
-      header.length,
-      ...rows.map((row) => String(row[header] === undefined ? '' : row[header]).length)
-    )
+    Math.max(header.length, ...rows.map((row) => String(row[header] === undefined ? '' : row[header]).length))
   );
 
-  const headerLine = headers
-    .map((header, i) => header.padEnd(widths[i]))
-    .join(' | ');
+  const headerLine = headers.map((header, i) => header.padEnd(widths[i])).join(' | ');
   console.log(colors.title(headerLine));
   console.log(colors.info(widths.map((w) => '-'.repeat(w)).join('-|-')));
 

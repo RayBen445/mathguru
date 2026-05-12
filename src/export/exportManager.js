@@ -17,12 +17,7 @@ function normalizeFormat(format) {
 function toCsv(entries) {
   const header = ['command', 'inputs', 'result', 'timestamp'];
   const rows = entries.map((entry) => {
-    const values = [
-      entry.command,
-      JSON.stringify(entry.inputs),
-      String(entry.result),
-      entry.timestamp,
-    ];
+    const values = [entry.command, JSON.stringify(entry.inputs), String(entry.result), entry.timestamp];
     return values.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',');
   });
   return [header.join(','), ...rows].join('\n');
@@ -31,21 +26,21 @@ function toCsv(entries) {
 function toText(payload) {
   const entries = Array.isArray(payload) ? payload : [payload];
   return entries
-    .map((entry) => `[${entry.timestamp}] ${entry.command}(${(entry.inputs || []).join(', ')}) => ${entry.result}`)
+    .map(
+      (entry) =>
+        `[${entry.timestamp}] ${entry.command}(${(entry.inputs || []).join(', ')}) => ${entry.result}`
+    )
     .join('\n');
 }
 
 function toMarkdown(payload) {
   const entries = Array.isArray(payload) ? payload : [payload];
-  const lines = [
-    '# MathGuru Export',
-    '',
-    '| Timestamp | Command | Inputs | Result |',
-    '|---|---|---|---|',
-  ];
+  const lines = ['# MathGuru Export', '', '| Timestamp | Command | Inputs | Result |', '|---|---|---|---|'];
 
   entries.forEach((entry) => {
-    lines.push(`| ${entry.timestamp} | ${entry.command} | ${JSON.stringify(entry.inputs || [])} | ${entry.result} |`);
+    lines.push(
+      `| ${entry.timestamp} | ${entry.command} | ${JSON.stringify(entry.inputs || [])} | ${entry.result} |`
+    );
   });
 
   return lines.join('\n');

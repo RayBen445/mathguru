@@ -3,10 +3,7 @@
  * Calculates inflation rate between an old and new price.
  */
 
-const {
-  validateRequiredArgs,
-  validateNumber,
-} = require('../utils/validation');
+const { validateRequiredArgs, validateNumber } = require('../utils/validation');
 
 /**
  * Calculates inflation rate: ((newPrice - oldPrice) / oldPrice) * 100.

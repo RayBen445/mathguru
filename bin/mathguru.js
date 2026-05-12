@@ -5,9 +5,22 @@ const packageJson = require('../package.json');
 const { executeCommand, resolveCommandName, listCommands } = require('../src/cli/commands');
 const { buildHelpText } = require('../src/cli/help');
 const colors = require('../src/cli/colors');
-const { printError, printInfo, printResult, printSuccess, printSection, printTable, printFooter } = require('../src/cli/format');
+const {
+  printError,
+  printInfo,
+  printResult,
+  printSuccess,
+  printSection,
+  printTable,
+  printFooter,
+} = require('../src/cli/format');
 const { startInteractiveMode } = require('../src/cli/menu');
-const { readHistory, clearHistory, addHistoryEntry, getLatestHistoryEntry } = require('../src/history/historyManager');
+const {
+  readHistory,
+  clearHistory,
+  addHistoryEntry,
+  getLatestHistoryEntry,
+} = require('../src/history/historyManager');
 const { readConfig, setConfigValue, getConfigValue } = require('../src/config/configManager');
 const { readPrecisionFromArgs, formatWithPrecision } = require('../src/utils/precision');
 const { exportData } = require('../src/export/exportManager');
@@ -109,7 +122,13 @@ async function main() {
 
   if (command === 'plugins') {
     printSection('Plugins');
-    printTable(listPlugins().map((plugin) => ({ name: plugin.name, version: plugin.version, description: plugin.description })));
+    printTable(
+      listPlugins().map((plugin) => ({
+        name: plugin.name,
+        version: plugin.version,
+        description: plugin.description,
+      }))
+    );
     printFooter();
     return;
   }

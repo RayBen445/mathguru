@@ -58,7 +58,10 @@ async function promptAverageValues() {
     },
   ]);
 
-  return answer.values.split(',').map((part) => part.trim()).filter(Boolean);
+  return answer.values
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean);
 }
 
 async function runInteractiveOperation(command) {
@@ -69,13 +72,14 @@ async function runInteractiveOperation(command) {
       rawArgs = await promptAverageValues();
     } else if (command === 'eval') {
       const inquirer = await getInquirer();
-      const answer = await inquirer.prompt([{ type: 'input', name: 'expression', message: 'Enter expression:' }]);
+      const answer = await inquirer.prompt([
+        { type: 'input', name: 'expression', message: 'Enter expression:' },
+      ]);
       rawArgs = [answer.expression];
     } else {
       const definition = COMMANDS[command];
       rawArgs = [];
       for (const arg of definition.args) {
-        // eslint-disable-next-line no-await-in-loop
         const value = await promptNumericValue(arg, command);
         rawArgs.push(value);
       }

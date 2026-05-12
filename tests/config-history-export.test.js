@@ -6,7 +6,12 @@ const homeDir = path.join(os.tmpdir(), `mathguru-test-${Date.now()}`);
 process.env.HOME = homeDir;
 
 const { readConfig, setConfigValue, getConfigValue } = require('../src/config/configManager');
-const { addHistoryEntry, readHistory, clearHistory, getLatestHistoryEntry } = require('../src/history/historyManager');
+const {
+  addHistoryEntry,
+  readHistory,
+  clearHistory,
+  getLatestHistoryEntry,
+} = require('../src/history/historyManager');
 const { exportData } = require('../src/export/exportManager');
 
 const originalCwd = process.cwd();

@@ -1,1 +1,13 @@
 node_modules/
+coverage/
+exports/*.json
+exports/*.txt
+exports/*.csv
+exports/*.md
+sessions/*.json
+sessions/*.txt
+sessions/*.md
+!exports/.gitkeep
+!sessions/.gitkeep
+*.log
+release-notes.md
