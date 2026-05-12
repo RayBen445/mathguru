@@ -1,0 +1,24 @@
+name: test
+
+on:
+  push:
+    branches: ['main', 'dev', 'feature/**']
+  pull_request:
+    branches: ['main', 'dev']
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run coverage
+      - run: npm run test:legacy
+      - run: npm run typecheck

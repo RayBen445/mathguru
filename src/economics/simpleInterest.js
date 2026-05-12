@@ -3,10 +3,7 @@
  * Calculates simple interest using principal, rate, and time.
  */
 
-const {
-  validateRequiredArgs,
-  validateNonNegative,
-} = require('../utils/validation');
+const { validateRequiredArgs, validateNonNegative } = require('../utils/validation');
 
 /**
  * Calculates simple interest: (principal * rate * time) / 100.

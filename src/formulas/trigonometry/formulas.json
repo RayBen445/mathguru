@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Pythagorean Identity",
+    "category": "trigonometry",
+    "formula": "sin²(x) + cos²(x) = 1",
+    "description": "Core trigonometric identity.",
+    "variables": { "x": "Angle" },
+    "examples": ["sin²(30°)+cos²(30°)=1"],
+    "applications": ["Signal analysis", "Trigonometric simplification"],
+    "keywords": ["trigonometry", "identity", "sin", "cos"]
+  }
+]

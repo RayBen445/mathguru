@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Derivative Power Rule",
+    "category": "calculus",
+    "formula": "d/dx (x^n) = n x^(n-1)",
+    "description": "Differentiates powers of x.",
+    "variables": { "x": "Variable", "n": "Exponent" },
+    "examples": ["d/dx(x^2)=2x"],
+    "applications": ["Rates of change", "Optimization"],
+    "keywords": ["derivative", "diff", "power rule"]
+  },
+  {
+    "name": "Integral of Sine",
+    "category": "calculus",
+    "formula": "∫ sin(x) dx = -cos(x) + C",
+    "description": "Antiderivative of sine.",
+    "variables": { "x": "Variable", "C": "Constant of integration" },
+    "examples": ["integrate(sin(x)) = -cos(x) + C"],
+    "applications": ["Signal processing", "Physics"],
+    "keywords": ["integral", "sin", "antiderivative"]
+  }
+]

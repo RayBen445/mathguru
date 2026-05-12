@@ -1,24 +1,31 @@
-/**
- * menu.js
- * Interactive CLI menu powered by inquirer.
- */
-
-const figlet = require('figlet');
+const ora = require('ora');
 const packageJson = require('../../package.json');
 const { COMMANDS, executeCommand, getCategoryChoices } = require('./commands');
 const { parseNumber } = require('./validation');
 const colors = require('./colors');
-const { printError, printResult, printInfo } = require('./format');
+const { printError, printResult, printInfo, printFooter } = require('./format');
 const { buildHelpText } = require('./help');
+const { readConfig } = require('../config/configManager');
+const { addHistoryEntry } = require('../history/historyManager');
+const { formatWithPrecision } = require('../utils/precision');
+const { buildStartupBanner } = require('./branding');
 
-const CATEGORY_CHOICES = ['Basic Math', 'Scientific Math', 'Economics', 'Finance', 'Help', 'Exit'];
+const CATEGORY_CHOICES = [
+  'Basic Math',
+  'Scientific Math',
+  'Economics',
+  'Finance',
+  'Symbolic Math',
+  'Graphing',
+  'LaTeX',
+  'Formula Engine',
+  'Education',
+  'Utilities',
+  'Help',
+  'Exit',
+];
 let inquirerInstance;
 
-/**
- * Lazily loads inquirer for interactive prompts.
- *
- * @returns {Promise<object>} Inquirer module instance.
- */
 async function getInquirer() {
   if (!inquirerInstance) {
     const module = await import('inquirer');
@@ -27,13 +34,6 @@ async function getInquirer() {
   return inquirerInstance;
 }
 
-/**
- * Prompts for one numeric value.
- *
- * @param {string} label - Parameter label.
- * @param {string} command - Command key.
- * @returns {Promise<string>} Raw user input.
- */
 async function promptNumericValue(label, command) {
   const inquirer = await getInquirer();
   const answer = await inquirer.prompt([
@@ -55,11 +55,19 @@ async function promptNumericValue(label, command) {
   return answer.value;
 }
 
-/**
- * Prompts for average values as comma-separated numbers.
- *
- * @returns {Promise<Array<string>>} Raw value list.
- */
+async function promptTextValue(message) {
+  const inquirer = await getInquirer();
+  const answer = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'value',
+      message,
+      validate: (input) => (input && input.trim() ? true : 'Value is required.'),
+    },
+  ]);
+  return answer.value;
+}
+
 async function promptAverageValues() {
   const inquirer = await getInquirer();
   const answer = await inquirer.prompt([
@@ -71,21 +79,6 @@ async function promptAverageValues() {
         if (!input || !input.trim()) {
           return 'average: provide at least one numeric value.';
         }
-
-        const parts = input
-          .split(',')
-          .map((part) => part.trim())
-          .filter(Boolean);
-
-        if (parts.length === 0) {
-          return 'average: provide at least one numeric value.';
-        }
-
-        const invalid = parts.find((part) => Number.isNaN(Number(part)) || !Number.isFinite(Number(part)));
-        if (invalid !== undefined) {
-          return 'average: all values must be valid numbers.';
-        }
-
         return true;
       },
     },
@@ -97,53 +90,67 @@ async function promptAverageValues() {
     .filter(Boolean);
 }
 
-/**
- * Runs a selected operation from interactive mode.
- *
- * @param {string} command - Command key.
- */
 async function runInteractiveOperation(command) {
   try {
     let rawArgs;
 
     if (command === 'average') {
       rawArgs = await promptAverageValues();
+    } else if (command === 'eval' || command === 'calc' || command === 'latex') {
+      rawArgs = [await promptTextValue('Enter expression:')];
+    } else if (command === 'graph') {
+      rawArgs = [await promptTextValue('Enter graph expression (e.g. sin(x)):')];
+    } else if (command === 'formula' || command === 'search' || command === 'explain') {
+      rawArgs = [await promptTextValue('Enter query/category:')];
+    } else if (command === 'trainer') {
+      const category = await promptTextValue('Enter trainer category (algebra|calculus|statistics):');
+      const difficulty = await promptTextValue('Enter difficulty (easy|medium|hard):');
+      rawArgs = [category, '--difficulty', difficulty];
+    } else if (command === 'convert') {
+      const value = await promptTextValue('Enter numeric value:');
+      const from = await promptTextValue('Enter from unit (e.g. km):');
+      const to = await promptTextValue('Enter to unit (e.g. miles):');
+      rawArgs = [value, from, to];
+    } else if (command === 'md') {
+      rawArgs = [await promptTextValue('Enter markdown file path:')];
     } else {
       const definition = COMMANDS[command];
       rawArgs = [];
       for (const arg of definition.args) {
-        // eslint-disable-next-line no-await-in-loop
         const value = await promptNumericValue(arg, command);
         rawArgs.push(value);
       }
     }
 
+    const spinner = ora('Processing...').start();
     const result = executeCommand(command, rawArgs);
-    printResult(result);
+    spinner.succeed('Done');
+
+    const config = readConfig();
+    if (typeof result === 'number' && Number.isFinite(result)) {
+      const formatted = formatWithPrecision(result, config.precision);
+      addHistoryEntry(command, rawArgs, Number(result));
+      printResult(formatted);
+      return;
+    }
+
+    addHistoryEntry(command, rawArgs, result);
+    printInfo(String(result));
   } catch (error) {
     printError(error.message);
   }
 }
 
-/**
- * Displays startup banner and welcome details.
- */
 function showStartup() {
-  const banner = figlet.textSync('MathGuru', { horizontalLayout: 'default' });
-  console.log(colors.banner(banner));
+  console.log(buildStartupBanner());
   console.log(colors.title('Welcome to MathGuru Interactive CLI'));
   console.log(colors.info(`Version: ${packageJson.version}\n`));
 }
 
-/**
- * Handles one category menu loop.
- *
- * @param {string} category - Menu category.
- */
 async function handleCategory(category) {
   const inquirer = await getInquirer();
   const categoryMap = getCategoryChoices();
-  const choices = [...categoryMap[category], { name: 'Back', value: '__back' }];
+  const choices = [...(categoryMap[category] || []), { name: 'Back', value: '__back' }];
 
   while (true) {
     const answer = await inquirer.prompt([
@@ -164,9 +171,6 @@ async function handleCategory(category) {
   }
 }
 
-/**
- * Starts interactive CLI mode.
- */
 async function startInteractiveMode() {
   const inquirer = await getInquirer();
   showStartup();
@@ -183,11 +187,13 @@ async function startInteractiveMode() {
 
     if (answer.category === 'Exit') {
       printInfo('Goodbye from MathGuru!');
+      printFooter();
       return;
     }
 
     if (answer.category === 'Help') {
       console.log(buildHelpText(packageJson.version));
+      printFooter();
       continue;
     }
 

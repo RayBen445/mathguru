@@ -1,43 +1,31 @@
-/**
- * index.js — mathguru entry point.
- * Exports all basic, scientific, economics, and finance utilities.
- */
+const sdk = require('./src/sdk');
 
-const add = require('./src/basic/add');
-const subtract = require('./src/basic/subtract');
-const multiply = require('./src/basic/multiply');
-const divide = require('./src/basic/divide');
-const square = require('./src/basic/square');
-
-const sqrt = require('./src/scientific/sqrt');
-const power = require('./src/scientific/power');
-const factorial = require('./src/scientific/factorial');
-const percentage = require('./src/scientific/percentage');
-const modulus = require('./src/scientific/modulus');
-const average = require('./src/scientific/average');
-
-const simpleInterest = require('./src/economics/simpleInterest');
-const inflationRate = require('./src/economics/inflationRate');
-const gdpGrowth = require('./src/economics/gdpGrowth');
-
-const compoundInterest = require('./src/finance/compoundInterest');
-const loanRepayment = require('./src/finance/loanRepayment');
+const { readConfig, setConfigValue, getConfigValue } = require('./src/config/configManager');
+const { readHistory, clearHistory } = require('./src/history/historyManager');
+const { registerPlugin, listPlugins } = require('./src/plugins/loader');
 
 module.exports = {
-  add,
-  subtract,
-  multiply,
-  divide,
-  square,
-  sqrt,
-  power,
-  factorial,
-  percentage,
-  modulus,
-  average,
-  simpleInterest,
-  compoundInterest,
-  inflationRate,
-  gdpGrowth,
-  loanRepayment,
+  ...sdk.basic,
+  ...sdk.scientific,
+  ...sdk.economics,
+  ...sdk.finance,
+  evaluateExpression: sdk.parser.evaluateExpression,
+  basic: sdk.basic,
+  scientific: sdk.scientific,
+  economics: sdk.economics,
+  finance: sdk.finance,
+  calc: sdk.calc,
+  graph: sdk.graph,
+  latex: sdk.latex,
+  formulas: sdk.formulas,
+  trainer: sdk.trainer,
+  convert: sdk.convert,
+  markdown: sdk.markdown,
+  readConfig,
+  setConfigValue,
+  getConfigValue,
+  readHistory,
+  clearHistory,
+  registerPlugin,
+  listPlugins,
 };

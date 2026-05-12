@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Circle Area",
+    "category": "geometry",
+    "formula": "A = πr²",
+    "description": "Area enclosed by a circle.",
+    "variables": { "A": "Area", "r": "Radius" },
+    "examples": ["r=3 => A=28.27"],
+    "applications": ["Civil design", "Geometry problems"],
+    "keywords": ["circle", "area", "geometry"]
+  }
+]

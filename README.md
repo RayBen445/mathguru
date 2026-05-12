@@ -1,206 +1,106 @@
-# mathguru
+# MathGuru Unified Platform
+
+**Powered by Kontyra**
 
 [![npm version](https://img.shields.io/npm/v/mathguru.svg)](https://www.npmjs.com/package/mathguru)
-[![license](https://img.shields.io/npm/l/mathguru.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/RayBen445/mathguru)](https://github.com/RayBen445/mathguru/releases)
+[![CI](https://github.com/RayBen445/mathguru/actions/workflows/test.yml/badge.svg)](https://github.com/RayBen445/mathguru/actions/workflows/test.yml)
+[![lint](https://github.com/RayBen445/mathguru/actions/workflows/lint.yml/badge.svg)](https://github.com/RayBen445/mathguru/actions/workflows/lint.yml)
 
-A professional Node.js math, economics, and finance library with a polished CLI (command mode + interactive menu mode).
+MathGuru is a unified ecosystem-grade mathematics platform for CLI + SDK workflows: symbolic math, graphing, LaTeX conversion, formulas, trainer exercises, markdown math tools, conversions, exports, and sessions.
 
-## Version
-
-Current package version: **1.1.0**
-
----
-
-## Installation
-
-### As a library
+## Install
 
 ```bash
 npm install mathguru
-```
-
-### As a global CLI
-
-```bash
 npm install -g mathguru
 ```
 
-### Local CLI development
+CLI aliases: `mathguru` and `mg`.
+
+## CLI Examples
 
 ```bash
-npm link
+mathguru calc "diff(x^2)"
+mathguru graph "sin(x)"
+mathguru graph "x^2" --format svg --size 640x360
+mathguru latex "sin(x)^2 + cos(x)^2"
+mathguru formula economics cobb-douglas
+mathguru search derivative
+mathguru explain inflation
+mathguru trainer calculus --difficulty medium --count 3
+mathguru convert 5 km miles
+mathguru md notes.md
+mathguru doctor
 ```
 
----
-
-## Project Structure
-
-```text
-mathguru/
-├── bin/
-│   └── mathguru.js
-├── src/
-│   ├── basic/
-│   ├── scientific/
-│   ├── economics/
-│   ├── finance/
-│   ├── cli/
-│   └── utils/
-├── index.js
-├── package.json
-├── README.md
-└── test.js
-```
-
----
-
-## CLI Usage
-
-### Command mode
+## Shell Mode
 
 ```bash
-mathguru add 2 3
-mathguru factorial 5
-mathguru inflation 500 700
-mathguru help
-mathguru version
+mathguru shell
 ```
 
-### Interactive mode
-
-Run without arguments:
-
-```bash
-mathguru
-```
-
-This opens an interactive terminal app with:
-
-- ASCII startup banner (figlet)
-- colored output (chalk)
-- category menu:
-  - Basic Math
-  - Scientific Math
-  - Economics
-  - Finance
-  - Help
-  - Exit
-
----
-
-## Interactive Terminal Output Examples
-
-### Startup example
+Shell supports persistent commands, history, `help`, `clear`, `stats`, `exit`, and symbolic shorthand such as:
 
 ```text
- __  __       _   _      _____                 
-|  \/  | __ _| |_| |__  |  ___|   _ _ __   ___ 
-| |\/| |/ _` | __| '_ \ | |_ | | | | '_ \ / _ \
-| |  | | (_| | |_| | | ||  _|| |_| | | | |  __/
-|_|  |_|\__,_|\__|_| |_||_|   \__,_|_| |_|\___|
-
-Welcome to MathGuru Interactive CLI
-Version: 1.1.0
+mathguru> integrate(sin(x))
+mathguru> graph x^2
 ```
 
-### Result example
-
-```text
-Select a category: Basic Math
-Choose an operation: Add
-Enter a: 12
-Enter b: 8
-Result: 20
-```
-
----
-
-## Command Reference
-
-### Basic Math
-
-- `mathguru add <a> <b>`
-- `mathguru subtract <a> <b>`
-- `mathguru multiply <a> <b>`
-- `mathguru divide <a> <b>`
-- `mathguru square <x>`
-
-### Scientific Math
-
-- `mathguru factorial <n>`
-- `mathguru power <base> <exponent>`
-- `mathguru sqrt <x>`
-- `mathguru average <n1> <n2> ...`
-- `mathguru percentage <value> <total>`
-
-### Economics
-
-- `mathguru inflation <oldPrice> <newPrice>`
-- `mathguru gdp-growth <oldGDP> <newGDP>`
-
-### Finance
-
-- `mathguru simple-interest <principal> <rate> <time>`
-- `mathguru compound-interest <principal> <rate> <time> <frequency>`
-- `mathguru loan-repayment <principal> <annualRate> <months>`
-
----
-
-## JavaScript API Usage
+## SDK Examples (CommonJS)
 
 ```js
-const {
-  add,
-  sqrt,
-  factorial,
-  simpleInterest,
-  compoundInterest,
-  inflationRate,
-  gdpGrowth,
-  loanRepayment,
-} = require('mathguru');
+const mathguru = require('mathguru');
 
-console.log(add(2, 3));
-console.log(sqrt(25));
-console.log(factorial(5));
-console.log(simpleInterest(1000, 5, 2));
-console.log(compoundInterest(1000, 5, 2, 12));
-console.log(inflationRate(500, 700));
-console.log(gdpGrowth(10000, 12000));
-console.log(loanRepayment(100000, 7.5, 60));
+mathguru.calc.integrate('sin(x)');
+mathguru.graph.plot('x^2', { size: '40x20' });
+mathguru.latex.convert('x^2 + 1');
+mathguru.formulas.get('cobb-douglas', 'economics');
+mathguru.finance.compoundInterest(1000, 5, 2, 12);
 ```
 
----
+## Session and Export
 
-## Validation and Error Handling
+```bash
+mathguru save-session demo
+mathguru load-session demo
+mathguru export-session csv demo
+mathguru export history markdown
+```
 
-MathGuru validates all inputs and shows friendly errors for:
+## Configuration
 
-- missing values
-- invalid numbers
-- divide-by-zero
-- empty average input
-- command misuse or unknown command
+```bash
+mathguru config set precision 2
+mathguru config set graphSize 80x20
+mathguru config set graphFormat svg
+mathguru config set exportFormat markdown
+```
 
----
-
-## CommonJS Compatibility
-
-MathGuru remains CommonJS compatible:
-
-- `require()` imports
-- `module.exports` exports
-
----
-
-## Run Tests
+## Testing and Validation
 
 ```bash
 npm test
+npm run coverage
+npm run doctor
+npm run benchmark
 ```
 
----
+Professional test suite covers calc, formulas, graph, latex, trainer, markdown, cli, shell, sdk, config/export/session/history, conversion, parser, and integration.
+
+## Future-ready (not implemented yet)
+
+Prepared architecture (not implemented by design):
+
+- AI integrations and AI tutor
+- VSCode extension
+- local REST API server
+- cloud sync/collaboration
+
+## Contributing
+
+See `CONTRIBUTING.md`, `RELEASE.md`, and `docs/`.
 
 ## License
 
-[MIT](LICENSE)
+MIT

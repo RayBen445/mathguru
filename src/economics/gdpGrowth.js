@@ -3,10 +3,7 @@
  * Calculates GDP growth rate between two periods.
  */
 
-const {
-  validateRequiredArgs,
-  validateNumber,
-} = require('../utils/validation');
+const { validateRequiredArgs, validateNumber } = require('../utils/validation');
 
 /**
  * Calculates GDP growth: ((newGDP - oldGDP) / oldGDP) * 100.

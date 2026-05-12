@@ -3,11 +3,7 @@
  * Calculates compound interest earned for given terms.
  */
 
-const {
-  validateRequiredArgs,
-  validateNonNegative,
-  validatePositive,
-} = require('../utils/validation');
+const { validateRequiredArgs, validateNonNegative, validatePositive } = require('../utils/validation');
 
 /**
  * Calculates compound interest earned.
