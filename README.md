@@ -3,143 +3,201 @@
 [![npm version](https://img.shields.io/npm/v/mathguru.svg)](https://www.npmjs.com/package/mathguru)
 [![license](https://img.shields.io/npm/l/mathguru.svg)](LICENSE)
 
-A beginner-friendly math utility package for Node.js. Perform common arithmetic operations — addition, subtraction, multiplication, division, and squaring — with clean, well-documented functions.
+A professional Node.js math, economics, and finance library with a polished CLI (command mode + interactive menu mode).
+
+## Version
+
+Current package version: **1.1.0**
 
 ---
 
 ## Installation
 
+### As a library
+
 ```bash
 npm install mathguru
 ```
 
----
+### As a global CLI
 
-## Usage
-
-```js
-const mathguru = require('mathguru');
-
-console.log(mathguru.add(3, 5));        // 8
-console.log(mathguru.subtract(10, 4));  // 6
-console.log(mathguru.multiply(4, 3));   // 12
-console.log(mathguru.divide(10, 2));    // 5
-console.log(mathguru.square(5));        // 25
+```bash
+npm install -g mathguru
 ```
 
-You can also import individual functions using destructuring:
+### Local CLI development
 
-```js
-const { add, subtract, multiply, divide, square } = require('mathguru');
-
-add(2, 3);       // 5
-subtract(9, 4);  // 5
-multiply(3, 4);  // 12
-divide(10, 2);   // 5
-square(6);       // 36
+```bash
+npm link
 ```
 
 ---
 
-## Functions
+## Project Structure
 
-### `add(a, b)`
-
-Returns the **sum** of two numbers.
-
-| Parameter | Type   | Description        |
-|-----------|--------|--------------------|
-| `a`       | number | The first number   |
-| `b`       | number | The second number  |
-
-```js
-add(2, 3); // 5
+```text
+mathguru/
+├── bin/
+│   └── mathguru.js
+├── src/
+│   ├── basic/
+│   ├── scientific/
+│   ├── economics/
+│   ├── finance/
+│   ├── cli/
+│   └── utils/
+├── index.js
+├── package.json
+├── README.md
+└── test.js
 ```
 
 ---
 
-### `subtract(a, b)`
+## CLI Usage
 
-Returns the **difference** between two numbers (`a - b`).
+### Command mode
 
-| Parameter | Type   | Description               |
-|-----------|--------|---------------------------|
-| `a`       | number | The number to subtract from |
-| `b`       | number | The number to subtract    |
+```bash
+mathguru add 2 3
+mathguru factorial 5
+mathguru inflation 500 700
+mathguru help
+mathguru version
+```
 
-```js
-subtract(10, 4); // 6
+### Interactive mode
+
+Run without arguments:
+
+```bash
+mathguru
+```
+
+This opens an interactive terminal app with:
+
+- ASCII startup banner (figlet)
+- colored output (chalk)
+- category menu:
+  - Basic Math
+  - Scientific Math
+  - Economics
+  - Finance
+  - Help
+  - Exit
+
+---
+
+## Interactive Terminal Output Examples
+
+### Startup example
+
+```text
+ __  __       _   _      _____                 
+|  \/  | __ _| |_| |__  |  ___|   _ _ __   ___ 
+| |\/| |/ _` | __| '_ \ | |_ | | | | '_ \ / _ \
+| |  | | (_| | |_| | | ||  _|| |_| | | | |  __/
+|_|  |_|\__,_|\__|_| |_||_|   \__,_|_| |_|\___|
+
+Welcome to MathGuru Interactive CLI
+Version: 1.1.0
+```
+
+### Result example
+
+```text
+Select a category: Basic Math
+Choose an operation: Add
+Enter a: 12
+Enter b: 8
+Result: 20
 ```
 
 ---
 
-### `multiply(a, b)`
+## Command Reference
 
-Returns the **product** of two numbers.
+### Basic Math
 
-| Parameter | Type   | Description        |
-|-----------|--------|--------------------|
-| `a`       | number | The first number   |
-| `b`       | number | The second number  |
+- `mathguru add <a> <b>`
+- `mathguru subtract <a> <b>`
+- `mathguru multiply <a> <b>`
+- `mathguru divide <a> <b>`
+- `mathguru square <x>`
+
+### Scientific Math
+
+- `mathguru factorial <n>`
+- `mathguru power <base> <exponent>`
+- `mathguru sqrt <x>`
+- `mathguru average <n1> <n2> ...`
+- `mathguru percentage <value> <total>`
+
+### Economics
+
+- `mathguru inflation <oldPrice> <newPrice>`
+- `mathguru gdp-growth <oldGDP> <newGDP>`
+
+### Finance
+
+- `mathguru simple-interest <principal> <rate> <time>`
+- `mathguru compound-interest <principal> <rate> <time> <frequency>`
+- `mathguru loan-repayment <principal> <annualRate> <months>`
+
+---
+
+## JavaScript API Usage
 
 ```js
-multiply(4, 3); // 12
+const {
+  add,
+  sqrt,
+  factorial,
+  simpleInterest,
+  compoundInterest,
+  inflationRate,
+  gdpGrowth,
+  loanRepayment,
+} = require('mathguru');
+
+console.log(add(2, 3));
+console.log(sqrt(25));
+console.log(factorial(5));
+console.log(simpleInterest(1000, 5, 2));
+console.log(compoundInterest(1000, 5, 2, 12));
+console.log(inflationRate(500, 700));
+console.log(gdpGrowth(10000, 12000));
+console.log(loanRepayment(100000, 7.5, 60));
 ```
 
 ---
 
-### `divide(a, b)`
+## Validation and Error Handling
 
-Returns the **quotient** of two numbers (`a / b`).
+MathGuru validates all inputs and shows friendly errors for:
 
-> ⚠️ Throws an `Error` if `b` is `0`.
-
-| Parameter | Type   | Description                        |
-|-----------|--------|------------------------------------|
-| `a`       | number | The dividend (number to divide)    |
-| `b`       | number | The divisor (must not be zero)     |
-
-```js
-divide(10, 2); // 5
-
-// Division by zero
-try {
-  divide(5, 0);
-} catch (err) {
-  console.error(err.message); // 'Division by zero is not allowed.'
-}
-```
+- missing values
+- invalid numbers
+- divide-by-zero
+- empty average input
+- command misuse or unknown command
 
 ---
 
-### `square(x)`
+## CommonJS Compatibility
 
-Returns the **square** of a number (`x * x`).
+MathGuru remains CommonJS compatible:
 
-| Parameter | Type   | Description           |
-|-----------|--------|-----------------------|
-| `x`       | number | The number to square  |
-
-```js
-square(5); // 25
-square(3); // 9
-```
+- `require()` imports
+- `module.exports` exports
 
 ---
 
-## Error Handling
+## Run Tests
 
-`divide(a, b)` will throw an `Error` when the divisor `b` is `0`:
-
-```js
-try {
-  mathguru.divide(10, 0);
-} catch (err) {
-  console.error(err.message); // 'Division by zero is not allowed.'
-}
+```bash
+npm test
 ```
-
-Always wrap `divide` calls in a `try/catch` block when the divisor is user-supplied.
 
 ---
 

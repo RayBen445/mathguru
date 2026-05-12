@@ -1,26 +1,27 @@
 /**
- * index.js — mathguru entry point
- *
- * This file imports all math utility functions from the src/ folder
- * and re-exports them as a single, easy-to-use object.
- *
- * Usage:
- *   const mathguru = require('mathguru');
- *   mathguru.add(2, 3);       // 5
- *   mathguru.subtract(9, 4);  // 5
- *   mathguru.multiply(3, 4);  // 12
- *   mathguru.divide(10, 2);   // 5
- *   mathguru.square(6);       // 36
- *
- * Or with destructuring:
- *   const { add, subtract, multiply, divide, square } = require('mathguru');
+ * index.js — mathguru entry point.
+ * Exports all basic, scientific, economics, and finance utilities.
  */
 
-const add = require('./src/add');
-const subtract = require('./src/subtract');
-const multiply = require('./src/multiply');
-const divide = require('./src/divide');
-const square = require('./src/square');
+const add = require('./src/basic/add');
+const subtract = require('./src/basic/subtract');
+const multiply = require('./src/basic/multiply');
+const divide = require('./src/basic/divide');
+const square = require('./src/basic/square');
+
+const sqrt = require('./src/scientific/sqrt');
+const power = require('./src/scientific/power');
+const factorial = require('./src/scientific/factorial');
+const percentage = require('./src/scientific/percentage');
+const modulus = require('./src/scientific/modulus');
+const average = require('./src/scientific/average');
+
+const simpleInterest = require('./src/economics/simpleInterest');
+const inflationRate = require('./src/economics/inflationRate');
+const gdpGrowth = require('./src/economics/gdpGrowth');
+
+const compoundInterest = require('./src/finance/compoundInterest');
+const loanRepayment = require('./src/finance/loanRepayment');
 
 module.exports = {
   add,
@@ -28,4 +29,15 @@ module.exports = {
   multiply,
   divide,
   square,
+  sqrt,
+  power,
+  factorial,
+  percentage,
+  modulus,
+  average,
+  simpleInterest,
+  compoundInterest,
+  inflationRate,
+  gdpGrowth,
+  loanRepayment,
 };
