@@ -74,10 +74,7 @@ function scoreFormula(entry, query) {
   if (haystack.includes(String(query).toLowerCase())) {
     return 75;
   }
-  const tokens = String(query)
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean);
+  const tokens = String(query).toLowerCase().split(/\s+/).filter(Boolean);
   const tokenHits = tokens.filter((token) => haystack.includes(token)).length;
   return tokenHits > 0 ? 50 + tokenHits : 0;
 }

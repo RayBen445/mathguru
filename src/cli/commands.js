@@ -9,6 +9,7 @@ const {
   getCategories,
   formatFormulaSummary,
 } = require('../formulas/formulaEngine');
+const { runDoctor, formatDoctorReport } = require('../core/doctor');
 
 const COMMAND_ALIASES = {
   plus: 'add',
@@ -52,7 +53,9 @@ function parseGraphArgs(rawArgs) {
 
 function executeFormulaCommand(rawArgs) {
   if (rawArgs.length === 0) {
-    return `Available formula categories:\n${getCategories().map((item) => `- ${item}`).join('\n')}`;
+    return `Available formula categories:\n${getCategories()
+      .map((item) => `- ${item}`)
+      .join('\n')}`;
   }
 
   if (rawArgs[0] === 'search') {
@@ -273,8 +276,8 @@ const COMMANDS = {
     args: ['query'],
     variadic: true,
     execute: (rawArgs) => {
-      const query = rawArgs.join(' ');
-      const { options } = parseOptions(rawArgs);
+      const { positionals, options } = parseOptions(rawArgs);
+      const query = positionals.join(' ');
       const results = searchFormulas(query, options.category ? { category: options.category } : {});
       return `Search results for '${query}':\n${formatFormulaSummary(results.slice(0, 10))}`;
     },
@@ -299,7 +302,11 @@ const COMMANDS = {
       if (!category) {
         throw new Error('trainer: category is required (algebra|calculus|statistics).');
       }
-      const quiz = mathguru.trainer.generate(category, options.difficulty || 'easy', Number(options.count || 3));
+      const quiz = mathguru.trainer.generate(
+        category,
+        options.difficulty || 'easy',
+        Number(options.count || 3)
+      );
       return mathguru.trainer.format(quiz);
     },
   },
@@ -329,6 +336,13 @@ const COMMANDS = {
       const result = mathguru.markdown.processFile(rawArgs[0]);
       return `Formatted ${result.expressions} math expressions in ${result.filePath}`;
     },
+  },
+  doctor: {
+    category: 'Utilities',
+    label: 'Platform Diagnostics',
+    usage: 'mathguru doctor',
+    args: [],
+    execute: () => formatDoctorReport(runDoctor()),
   },
 };
 

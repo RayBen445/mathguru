@@ -22,7 +22,11 @@
     "validate:package": "node scripts/validate-package.js",
     "validate:version-tag": "node scripts/verify-version-tag.js",
     "typecheck": "tsc --project tsconfig.types.json",
-    "prepublish:check": "npm run lint && npm run format:check && npm test && npm run test:legacy && npm run typecheck && npm run validate:package"
+    "prepublish:check": "npm run lint && npm run format:check && npm test && npm run test:legacy && npm run typecheck && npm run validate:package",
+    "test:watch": "jest --watch",
+    "coverage": "jest --coverage",
+    "benchmark": "node scripts/benchmark.js",
+    "doctor": "node ./bin/mathguru.js doctor"
   },
   "keywords": [
     "math",
@@ -76,7 +80,25 @@
     "testEnvironment": "node",
     "testMatch": [
       "**/tests/**/*.test.js"
-    ]
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "index.js",
+      "bin/mathguru.js"
+    ],
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 40,
+        "functions": 45,
+        "lines": 50,
+        "statements": 50
+      }
+    }
   },
   "kontyra": {
     "poweredBy": "Powered by Kontyra",

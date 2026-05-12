@@ -1,228 +1,106 @@
-# MathGuru CLI
+# MathGuru Unified Platform
 
 **Powered by Kontyra**
 
 [![npm version](https://img.shields.io/npm/v/mathguru.svg)](https://www.npmjs.com/package/mathguru)
 [![GitHub release](https://img.shields.io/github/v/release/RayBen445/mathguru)](https://github.com/RayBen445/mathguru/releases)
-[![npm downloads](https://img.shields.io/npm/dm/mathguru.svg)](https://www.npmjs.com/package/mathguru)
 [![CI](https://github.com/RayBen445/mathguru/actions/workflows/test.yml/badge.svg)](https://github.com/RayBen445/mathguru/actions/workflows/test.yml)
 [![lint](https://github.com/RayBen445/mathguru/actions/workflows/lint.yml/badge.svg)](https://github.com/RayBen445/mathguru/actions/workflows/lint.yml)
-[![license](https://img.shields.io/npm/l/mathguru.svg)](LICENSE)
 
-MathGuru is a professionally engineered open-source Node.js ecosystem for mathematics, economics, finance, exports, session tooling, and terminal workflows.
+MathGuru is a unified ecosystem-grade mathematics platform for CLI + SDK workflows: symbolic math, graphing, LaTeX conversion, formulas, trainer exercises, markdown math tools, conversions, exports, and sessions.
 
----
-
-## Installation
+## Install
 
 ```bash
 npm install mathguru
 npm install -g mathguru
 ```
 
-CLI aliases:
-
-```bash
-mathguru add 2 3
-mg sqrt 25
-```
-
----
-
-## Kontyra Branding
-
-MathGuru is maintained as a Kontyra product with consistent terminal and documentation branding:
-
-```text
-Powered by Kontyra
-```
-
-Included in startup banner, help/docs, package metadata, README, and terminal footer.
-
----
+CLI aliases: `mathguru` and `mg`.
 
 ## CLI Examples
 
 ```bash
-mathguru add 2 3
-mathguru divide 10 3 --precision 2
-mathguru inflation 500 700
-mathguru eval "sqrt(25) + 5"
-mathguru help
+mathguru calc "diff(x^2)"
+mathguru graph "sin(x)"
+mathguru graph "x^2" --format svg --size 640x360
+mathguru latex "sin(x)^2 + cos(x)^2"
+mathguru formula economics cobb-douglas
+mathguru search derivative
+mathguru explain inflation
+mathguru trainer calculus --difficulty medium --count 3
+mathguru convert 5 km miles
+mathguru md notes.md
+mathguru doctor
 ```
 
----
-
-## Shell Examples
+## Shell Mode
 
 ```bash
 mathguru shell
 ```
 
-Inside shell:
+Shell supports persistent commands, history, `help`, `clear`, `stats`, `exit`, and symbolic shorthand such as:
 
 ```text
-mathguru> add 2 3
-5
-
-mathguru> inflation 500 700
-40
-
-mathguru> stats
+mathguru> integrate(sin(x))
+mathguru> graph x^2
 ```
-
----
 
 ## SDK Examples (CommonJS)
 
 ```js
 const mathguru = require('mathguru');
 
-console.log(mathguru.add(2, 3));
-console.log(mathguru.sqrt(25));
-console.log(mathguru.compoundInterest(1000, 5, 2, 12));
-console.log(mathguru.evaluateExpression('sqrt(25) + 5'));
+mathguru.calc.integrate('sin(x)');
+mathguru.graph.plot('x^2', { size: '40x20' });
+mathguru.latex.convert('x^2 + 1');
+mathguru.formulas.get('cobb-douglas', 'economics');
+mathguru.finance.compoundInterest(1000, 5, 2, 12);
 ```
 
-Type definitions are available via `types/index.d.ts`.
-
----
-
-## Formula Engine Examples
+## Session and Export
 
 ```bash
-mathguru eval "5 * (10 + 2)"
-mathguru eval "sqrt(25) + 5"
-mathguru eval "50% * 200"
-mathguru eval "2^8"
-```
-
----
-
-## Export Examples
-
-```bash
-mathguru export history json
+mathguru save-session demo
+mathguru load-session demo
+mathguru export-session csv demo
 mathguru export history markdown
-mathguru export result csv
 ```
 
-Formats: JSON, CSV, TXT, Markdown.
-
----
-
-## Session Examples
+## Configuration
 
 ```bash
-mathguru save-session
-mathguru save-session sprint-review
-mathguru load-session sprint-review
-mathguru export-session markdown sprint-review
+mathguru config set precision 2
+mathguru config set graphSize 80x20
+mathguru config set graphFormat svg
+mathguru config set exportFormat markdown
 ```
 
-Sessions are stored in `sessions/`.
-
----
-
-## Professional Engineering Workflow
-
-### CI/CD Workflows
-
-- `.github/workflows/test.yml` → tests + legacy tests + typings validation
-- `.github/workflows/lint.yml` → lint + format checks + audit
-- `.github/workflows/release.yml` → tagged release automation + release notes
-- `.github/workflows/npm-publish.yml` → publish to npm on GitHub release
-
-### Semantic Versioning
-
-- PATCH = bug fixes
-- MINOR = new features
-- MAJOR = breaking changes
-
-Helper scripts:
+## Testing and Validation
 
 ```bash
-npm run release:patch
-npm run release:minor
-npm run release:major
+npm test
+npm run coverage
+npm run doctor
+npm run benchmark
 ```
 
-### Changelog Automation
+Professional test suite covers calc, formulas, graph, latex, trainer, markdown, cli, shell, sdk, config/export/session/history, conversion, parser, and integration.
 
-```bash
-npm run changelog
-```
+## Future-ready (not implemented yet)
 
-Maintains `CHANGELOG.md` from commit history.
+Prepared architecture (not implemented by design):
 
-### Pre-publish Validation
+- AI integrations and AI tutor
+- VSCode extension
+- local REST API server
+- cloud sync/collaboration
 
-```bash
-npm run prepublish:check
-```
+## Contributing
 
-Runs lint, formatting checks, tests, typecheck, package validation, and tarball dry-run.
-
----
-
-## Documentation
-
-See `docs/`:
-
-- `docs/installation.md`
-- `docs/cli.md`
-- `docs/sdk.md`
-- `docs/formulas.md`
-- `docs/contributing.md`
-- `docs/releases.md`
-
-Release process details: `RELEASE.md`.
-
----
-
-## Contribution Guide
-
-Please read:
-
-- `CONTRIBUTING.md`
-- `CODE_OF_CONDUCT.md`
-- `SECURITY.md`
-
-Branch strategy:
-
-- `main`
-- `dev`
-- `feature/*`
-
----
-
-## Project Structure
-
-```text
-mathguru/
-├── .github/workflows/
-├── bin/
-├── docs/
-├── src/
-├── tests/
-├── exports/
-├── sessions/
-├── types/
-├── .gitignore
-├── .npmignore
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-├── SECURITY.md
-├── LICENSE
-├── RELEASE.md
-├── README.md
-├── package.json
-└── test.js
-```
-
----
+See `CONTRIBUTING.md`, `RELEASE.md`, and `docs/`.
 
 ## License
 
-[MIT](LICENSE)
+MIT

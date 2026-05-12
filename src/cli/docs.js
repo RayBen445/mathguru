@@ -51,6 +51,7 @@ Usage:
 
 === Markdown Math ===
 - mathguru md notes.md
+- mathguru doctor
 
 === Aliases ===
 - mg (CLI alias for mathguru)
@@ -81,6 +82,9 @@ Usage:
 === Shell ===
 - mathguru shell
 - Shell commands: help, clear, stats, exit
+
+Interactive Mode:
+- Run 'mathguru' with no arguments to open the interactive terminal menu.
 
 Future-ready architecture (not implemented yet):
 - AI integrations

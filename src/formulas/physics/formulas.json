@@ -4,7 +4,7 @@
     "category": "physics",
     "formula": "F = ma",
     "description": "Force equals mass times acceleration.",
-    "variables": {"F": "Force", "m": "Mass", "a": "Acceleration"},
+    "variables": { "F": "Force", "m": "Mass", "a": "Acceleration" },
     "examples": ["m=10,a=2 => F=20N"],
     "applications": ["Dynamics", "Mechanical engineering"],
     "keywords": ["physics", "force", "newton"]

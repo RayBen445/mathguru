@@ -84,9 +84,10 @@ function handleShellLine(line) {
   const result = executeCommand(resolvedCommand, cleanedArgs);
   const finalPrecision = precision ?? config.precision;
 
-  const output = typeof result === 'number' && Number.isFinite(result)
-    ? formatWithPrecision(result, finalPrecision)
-    : String(result);
+  const output =
+    typeof result === 'number' && Number.isFinite(result)
+      ? formatWithPrecision(result, finalPrecision)
+      : String(result);
 
   addHistoryEntry(resolvedCommand, cleanedArgs, result);
 

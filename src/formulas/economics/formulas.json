@@ -4,7 +4,14 @@
     "category": "economics",
     "formula": "Q = A × L^α × K^β",
     "description": "Represents output based on labor and capital.",
-    "variables": {"Q": "Output", "A": "Technology factor", "L": "Labor", "K": "Capital", "α": "Labor elasticity", "β": "Capital elasticity"},
+    "variables": {
+      "Q": "Output",
+      "A": "Technology factor",
+      "L": "Labor",
+      "K": "Capital",
+      "α": "Labor elasticity",
+      "β": "Capital elasticity"
+    },
     "examples": ["Q = 1.2 × 10^0.6 × 8^0.4"],
     "applications": ["Production analysis", "Growth economics"],
     "keywords": ["cobb-douglas", "production", "economics"]
@@ -14,7 +21,7 @@
     "category": "economics",
     "formula": "Inflation(%) = ((New - Old) / Old) × 100",
     "description": "Measures percentage increase in price level.",
-    "variables": {"Old": "Old price index", "New": "New price index"},
+    "variables": { "Old": "Old price index", "New": "New price index" },
     "examples": ["Old=500, New=700 => 40%"],
     "applications": ["Macroeconomic analysis", "Cost planning"],
     "keywords": ["inflation", "price", "economics"]

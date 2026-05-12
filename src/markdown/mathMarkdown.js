@@ -13,7 +13,7 @@ function toMathBlock(expression) {
   try {
     const tex = convert(expression);
     return `$$\n${tex}\n$$`;
-  } catch (_error) {
+  } catch {
     return `$$\n${expression}\n$$`;
   }
 }

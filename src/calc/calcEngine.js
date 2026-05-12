@@ -37,7 +37,7 @@ function evaluate(expression, scope = {}) {
 function simplify(expression) {
   try {
     return normalizeOutput(nerdamer.simplify(expression));
-  } catch (_error) {
+  } catch {
     return normalizeOutput(Algebrite.simplify(expression));
   }
 }
@@ -45,7 +45,7 @@ function simplify(expression) {
 function differentiate(expression, variable = 'x') {
   try {
     return normalizeOutput(nerdamer.diff(expression, variable));
-  } catch (_error) {
+  } catch {
     return normalizeOutput(Algebrite.run(`d(${expression},${variable})`));
   }
 }
@@ -53,7 +53,7 @@ function differentiate(expression, variable = 'x') {
 function integrate(expression, variable = 'x') {
   try {
     return normalizeOutput(nerdamer.integrate(expression, variable));
-  } catch (_error) {
+  } catch {
     return normalizeOutput(Algebrite.run(`integral(${expression},${variable})`));
   }
 }

@@ -77,10 +77,7 @@ function generate(category, difficulty = 'easy', count = 3) {
 function formatQuiz(quiz) {
   const header = `Trainer Quiz (${quiz.category} - ${quiz.difficulty})`;
   const body = quiz.questions
-    .map(
-      (item, index) =>
-        `${index + 1}. ${item.question}\n   Answer: ${item.answer}`
-    )
+    .map((item, index) => `${index + 1}. ${item.question}\n   Answer: ${item.answer}`)
     .join('\n');
   return `${header}\n${body}`;
 }

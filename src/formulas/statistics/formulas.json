@@ -4,7 +4,7 @@
     "category": "statistics",
     "formula": "μ = (Σxᵢ)/n",
     "description": "Average of values in a sample or population.",
-    "variables": {"xᵢ": "Data point", "n": "Number of observations", "μ": "Mean"},
+    "variables": { "xᵢ": "Data point", "n": "Number of observations", "μ": "Mean" },
     "examples": ["Mean of 1,2,3 is 2"],
     "applications": ["Descriptive statistics", "Forecasting"],
     "keywords": ["mean", "average", "statistics"]

@@ -4,7 +4,12 @@
     "category": "algebra",
     "formula": "x = (-b ± √(b² - 4ac)) / 2a",
     "description": "Finds roots of quadratic equations.",
-    "variables": {"a": "Quadratic coefficient", "b": "Linear coefficient", "c": "Constant term", "x": "Unknown root"},
+    "variables": {
+      "a": "Quadratic coefficient",
+      "b": "Linear coefficient",
+      "c": "Constant term",
+      "x": "Unknown root"
+    },
     "examples": ["For x²-5x+6=0, roots are x=2 and x=3"],
     "applications": ["Polynomial root finding", "Engineering models"],
     "keywords": ["quadratic", "roots", "algebra"]

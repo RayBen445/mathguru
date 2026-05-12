@@ -26,7 +26,7 @@ function sampleSeries(expression, width, minX = -10, maxX = 10) {
     try {
       const y = Number(evaluate(expression, { x }));
       values.push(Number.isFinite(y) ? y : NaN);
-    } catch (_error) {
+    } catch {
       values.push(NaN);
     }
   }
@@ -37,7 +37,9 @@ function plotAscii(expression, options = {}) {
   const size = parseSize(options.size);
   const values = sampleSeries(expression, size.width, options.minX, options.maxX);
   const chart = asciichart.plot(values, { height: size.height - 3, format: (n) => n.toFixed(2) });
-  return [chart, `x:[${options.minX ?? -10}, ${options.maxX ?? 10}]  y=f(x)  formula=${expression}`].join('\n');
+  return [chart, `x:[${options.minX ?? -10}, ${options.maxX ?? 10}]  y=f(x)  formula=${expression}`].join(
+    '\n'
+  );
 }
 
 function buildSvg(values, width, height) {
