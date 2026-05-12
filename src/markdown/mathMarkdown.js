@@ -4,9 +4,18 @@ const { convert } = require('../latex/latexEngine');
 
 function detectExpressions(content) {
   const lines = String(content).split('\n');
+  const operators = ['=', '+', '-', '*', '/', '^'];
   return lines
     .map((line, index) => ({ line, index }))
-    .filter(({ line }) => /[a-zA-Z0-9]+\s*[=+\-*/^]\s*[a-zA-Z0-9(]/.test(line));
+    .filter(({ line }) => {
+      const trimmed = line.trim();
+      if (trimmed.length < 3) {
+        return false;
+      }
+      const hasOperator = operators.some((operator) => trimmed.includes(operator));
+      const hasAlphaNumeric = Array.from(trimmed).some((char) => /[a-z0-9]/i.test(char));
+      return hasOperator && hasAlphaNumeric;
+    });
 }
 
 function toMathBlock(expression) {

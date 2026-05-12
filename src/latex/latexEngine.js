@@ -8,9 +8,13 @@ function normalizeInput(expression) {
     throw new Error('latex: expression is required.');
   }
 
-  const integralMatch = raw.match(/^integral\s+(.+)$/i);
-  if (integralMatch) {
-    return `integrate(${integralMatch[1]}, x)`;
+  const lowered = raw.toLowerCase();
+  if (lowered.startsWith('integral ')) {
+    const integralExpression = raw.slice(9).trim();
+    if (!integralExpression) {
+      throw new Error('latex: integral expression is required after \"integral\".');
+    }
+    return `integrate(${integralExpression}, x)`;
   }
 
   return raw;
