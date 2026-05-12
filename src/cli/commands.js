@@ -1,10 +1,19 @@
-/**
- * commands.js
- * Shared command metadata and execution logic for CLI argument mode and interactive mode.
- */
-
 const mathguru = require('../../index');
 const { parseNumber, parseNumberList } = require('./validation');
+const { evaluateExpression } = require('../parser/expressionParser');
+
+const COMMAND_ALIASES = {
+  plus: 'add',
+  sub: 'subtract',
+  mul: 'multiply',
+  div: 'divide',
+  fact: 'factorial',
+  infl: 'inflation',
+  gdp: 'gdp-growth',
+  si: 'simple-interest',
+  ci: 'compound-interest',
+  loan: 'loan-repayment',
+};
 
 const COMMANDS = {
   add: {
@@ -19,16 +28,14 @@ const COMMANDS = {
     label: 'Subtract',
     usage: 'mathguru subtract 10 4',
     args: ['a', 'b'],
-    execute: (rawArgs) =>
-      mathguru.subtract(parseNumber(rawArgs[0], 'a', 'subtract'), parseNumber(rawArgs[1], 'b', 'subtract')),
+    execute: (rawArgs) => mathguru.subtract(parseNumber(rawArgs[0], 'a', 'subtract'), parseNumber(rawArgs[1], 'b', 'subtract')),
   },
   multiply: {
     category: 'Basic Math',
     label: 'Multiply',
     usage: 'mathguru multiply 5 6',
     args: ['a', 'b'],
-    execute: (rawArgs) =>
-      mathguru.multiply(parseNumber(rawArgs[0], 'a', 'multiply'), parseNumber(rawArgs[1], 'b', 'multiply')),
+    execute: (rawArgs) => mathguru.multiply(parseNumber(rawArgs[0], 'a', 'multiply'), parseNumber(rawArgs[1], 'b', 'multiply')),
   },
   divide: {
     category: 'Basic Math',
@@ -78,128 +85,99 @@ const COMMANDS = {
     label: 'Percentage',
     usage: 'mathguru percentage 20 100',
     args: ['value', 'total'],
-    execute: (rawArgs) =>
-      mathguru.percentage(parseNumber(rawArgs[0], 'value', 'percentage'), parseNumber(rawArgs[1], 'total', 'percentage')),
+    execute: (rawArgs) => mathguru.percentage(parseNumber(rawArgs[0], 'value', 'percentage'), parseNumber(rawArgs[1], 'total', 'percentage')),
   },
   inflation: {
     category: 'Economics',
     label: 'Inflation Rate',
     usage: 'mathguru inflation 500 700',
     args: ['oldPrice', 'newPrice'],
-    execute: (rawArgs) =>
-      mathguru.inflationRate(
-        parseNumber(rawArgs[0], 'oldPrice', 'inflation'),
-        parseNumber(rawArgs[1], 'newPrice', 'inflation')
-      ),
+    execute: (rawArgs) => mathguru.inflationRate(parseNumber(rawArgs[0], 'oldPrice', 'inflation'), parseNumber(rawArgs[1], 'newPrice', 'inflation')),
   },
   'gdp-growth': {
     category: 'Economics',
     label: 'GDP Growth',
     usage: 'mathguru gdp-growth 10000 12000',
     args: ['oldGDP', 'newGDP'],
-    execute: (rawArgs) =>
-      mathguru.gdpGrowth(parseNumber(rawArgs[0], 'oldGDP', 'gdp-growth'), parseNumber(rawArgs[1], 'newGDP', 'gdp-growth')),
+    execute: (rawArgs) => mathguru.gdpGrowth(parseNumber(rawArgs[0], 'oldGDP', 'gdp-growth'), parseNumber(rawArgs[1], 'newGDP', 'gdp-growth')),
   },
   'simple-interest': {
     category: 'Finance',
     label: 'Simple Interest',
     usage: 'mathguru simple-interest 1000 5 2',
     args: ['principal', 'rate', 'time'],
-    execute: (rawArgs) =>
-      mathguru.simpleInterest(
-        parseNumber(rawArgs[0], 'principal', 'simple-interest'),
-        parseNumber(rawArgs[1], 'rate', 'simple-interest'),
-        parseNumber(rawArgs[2], 'time', 'simple-interest')
-      ),
+    execute: (rawArgs) => mathguru.simpleInterest(parseNumber(rawArgs[0], 'principal', 'simple-interest'), parseNumber(rawArgs[1], 'rate', 'simple-interest'), parseNumber(rawArgs[2], 'time', 'simple-interest')),
   },
   'compound-interest': {
     category: 'Finance',
     label: 'Compound Interest',
     usage: 'mathguru compound-interest 1000 5 2 12',
     args: ['principal', 'rate', 'time', 'frequency'],
-    execute: (rawArgs) =>
-      mathguru.compoundInterest(
-        parseNumber(rawArgs[0], 'principal', 'compound-interest'),
-        parseNumber(rawArgs[1], 'rate', 'compound-interest'),
-        parseNumber(rawArgs[2], 'time', 'compound-interest'),
-        parseNumber(rawArgs[3], 'frequency', 'compound-interest')
-      ),
+    execute: (rawArgs) => mathguru.compoundInterest(parseNumber(rawArgs[0], 'principal', 'compound-interest'), parseNumber(rawArgs[1], 'rate', 'compound-interest'), parseNumber(rawArgs[2], 'time', 'compound-interest'), parseNumber(rawArgs[3], 'frequency', 'compound-interest')),
   },
   'loan-repayment': {
     category: 'Finance',
     label: 'Loan Repayment',
     usage: 'mathguru loan-repayment 100000 7.5 60',
     args: ['principal', 'annualRate', 'months'],
-    execute: (rawArgs) =>
-      mathguru.loanRepayment(
-        parseNumber(rawArgs[0], 'principal', 'loan-repayment'),
-        parseNumber(rawArgs[1], 'annualRate', 'loan-repayment'),
-        parseNumber(rawArgs[2], 'months', 'loan-repayment')
-      ),
+    execute: (rawArgs) => mathguru.loanRepayment(parseNumber(rawArgs[0], 'principal', 'loan-repayment'), parseNumber(rawArgs[1], 'annualRate', 'loan-repayment'), parseNumber(rawArgs[2], 'months', 'loan-repayment')),
+  },
+  eval: {
+    category: 'Scientific Math',
+    label: 'Evaluate Expression',
+    usage: 'mathguru eval "sqrt(25) + 5"',
+    args: ['expression'],
+    execute: (rawArgs) => evaluateExpression(rawArgs.join(' ')),
   },
 };
 
-/**
- * Executes a CLI command with validation.
- *
- * @param {string} command - CLI command.
- * @param {Array<string>} rawArgs - Raw CLI args.
- * @returns {number} Calculation result.
- */
+function resolveCommandName(command) {
+  const normalized = String(command || '').toLowerCase();
+  return COMMAND_ALIASES[normalized] || normalized;
+}
+
 function executeCommand(command, rawArgs) {
-  const definition = COMMANDS[command];
+  const resolved = resolveCommandName(command);
+  const definition = COMMANDS[resolved];
   if (!definition) {
     throw new Error(`Unknown command: ${command}. Run 'mathguru help' to see available commands.`);
   }
 
   if (definition.variadic) {
     if (rawArgs.length === 0) {
-      throw new Error(`${command}: expected at least one numeric argument.`);
+      throw new Error(`${resolved}: expected at least one numeric argument.`);
     }
   } else if (rawArgs.length !== definition.args.length) {
-    throw new Error(`${command}: expected ${definition.args.length} argument(s), but received ${rawArgs.length}.`);
+    throw new Error(`${resolved}: expected ${definition.args.length} argument(s), but received ${rawArgs.length}.`);
   }
 
   return definition.execute(rawArgs);
 }
 
-/**
- * Returns command definitions grouped by category for menu rendering.
- *
- * @returns {Record<string, Array<{name:string,value:string}>>} Category-to-command mapping.
- */
 function getCategoryChoices() {
-  const categories = {
-    'Basic Math': [],
-    'Scientific Math': [],
-    Economics: [],
-    Finance: [],
-  };
-
+  const categories = { 'Basic Math': [], 'Scientific Math': [], Economics: [], Finance: [] };
   Object.entries(COMMANDS).forEach(([command, definition]) => {
     if (categories[definition.category]) {
-      categories[definition.category].push({
-        name: definition.label,
-        value: command,
-      });
+      categories[definition.category].push({ name: definition.label, value: command });
     }
   });
-
   return categories;
 }
 
-/**
- * Builds help lines from command metadata.
- *
- * @returns {Array<string>} Help lines.
- */
 function getHelpExamples() {
   return Object.values(COMMANDS).map((definition) => `  ${definition.usage}`);
 }
 
+function listCommands() {
+  return Object.keys(COMMANDS);
+}
+
 module.exports = {
   COMMANDS,
+  COMMAND_ALIASES,
   executeCommand,
+  resolveCommandName,
   getCategoryChoices,
   getHelpExamples,
+  listCommands,
 };

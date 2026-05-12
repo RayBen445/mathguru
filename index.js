@@ -1,8 +1,3 @@
-/**
- * index.js — mathguru entry point.
- * Exports all basic, scientific, economics, and finance utilities.
- */
-
 const add = require('./src/basic/add');
 const subtract = require('./src/basic/subtract');
 const multiply = require('./src/basic/multiply');
@@ -23,6 +18,11 @@ const gdpGrowth = require('./src/economics/gdpGrowth');
 const compoundInterest = require('./src/finance/compoundInterest');
 const loanRepayment = require('./src/finance/loanRepayment');
 
+const { evaluateExpression } = require('./src/parser/expressionParser');
+const { readConfig, setConfigValue, getConfigValue } = require('./src/config/configManager');
+const { readHistory, clearHistory } = require('./src/history/historyManager');
+const { registerPlugin, listPlugins } = require('./src/plugins/loader');
+
 module.exports = {
   add,
   subtract,
@@ -40,4 +40,12 @@ module.exports = {
   inflationRate,
   gdpGrowth,
   loanRepayment,
+  evaluateExpression,
+  readConfig,
+  setConfigValue,
+  getConfigValue,
+  readHistory,
+  clearHistory,
+  registerPlugin,
+  listPlugins,
 };

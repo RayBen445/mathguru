@@ -1,24 +1,18 @@
-/**
- * menu.js
- * Interactive CLI menu powered by inquirer.
- */
-
 const figlet = require('figlet');
+const ora = require('ora');
 const packageJson = require('../../package.json');
 const { COMMANDS, executeCommand, getCategoryChoices } = require('./commands');
 const { parseNumber } = require('./validation');
 const colors = require('./colors');
 const { printError, printResult, printInfo } = require('./format');
 const { buildHelpText } = require('./help');
+const { readConfig } = require('../config/configManager');
+const { addHistoryEntry } = require('../history/historyManager');
+const { formatWithPrecision } = require('../utils/precision');
 
 const CATEGORY_CHOICES = ['Basic Math', 'Scientific Math', 'Economics', 'Finance', 'Help', 'Exit'];
 let inquirerInstance;
 
-/**
- * Lazily loads inquirer for interactive prompts.
- *
- * @returns {Promise<object>} Inquirer module instance.
- */
 async function getInquirer() {
   if (!inquirerInstance) {
     const module = await import('inquirer');
@@ -27,13 +21,6 @@ async function getInquirer() {
   return inquirerInstance;
 }
 
-/**
- * Prompts for one numeric value.
- *
- * @param {string} label - Parameter label.
- * @param {string} command - Command key.
- * @returns {Promise<string>} Raw user input.
- */
 async function promptNumericValue(label, command) {
   const inquirer = await getInquirer();
   const answer = await inquirer.prompt([
@@ -55,11 +42,6 @@ async function promptNumericValue(label, command) {
   return answer.value;
 }
 
-/**
- * Prompts for average values as comma-separated numbers.
- *
- * @returns {Promise<Array<string>>} Raw value list.
- */
 async function promptAverageValues() {
   const inquirer = await getInquirer();
   const answer = await inquirer.prompt([
@@ -71,43 +53,24 @@ async function promptAverageValues() {
         if (!input || !input.trim()) {
           return 'average: provide at least one numeric value.';
         }
-
-        const parts = input
-          .split(',')
-          .map((part) => part.trim())
-          .filter(Boolean);
-
-        if (parts.length === 0) {
-          return 'average: provide at least one numeric value.';
-        }
-
-        const invalid = parts.find((part) => Number.isNaN(Number(part)) || !Number.isFinite(Number(part)));
-        if (invalid !== undefined) {
-          return 'average: all values must be valid numbers.';
-        }
-
         return true;
       },
     },
   ]);
 
-  return answer.values
-    .split(',')
-    .map((part) => part.trim())
-    .filter(Boolean);
+  return answer.values.split(',').map((part) => part.trim()).filter(Boolean);
 }
 
-/**
- * Runs a selected operation from interactive mode.
- *
- * @param {string} command - Command key.
- */
 async function runInteractiveOperation(command) {
   try {
     let rawArgs;
 
     if (command === 'average') {
       rawArgs = await promptAverageValues();
+    } else if (command === 'eval') {
+      const inquirer = await getInquirer();
+      const answer = await inquirer.prompt([{ type: 'input', name: 'expression', message: 'Enter expression:' }]);
+      rawArgs = [answer.expression];
     } else {
       const definition = COMMANDS[command];
       rawArgs = [];
@@ -118,16 +81,19 @@ async function runInteractiveOperation(command) {
       }
     }
 
+    const spinner = ora('Calculating...').start();
     const result = executeCommand(command, rawArgs);
-    printResult(result);
+    spinner.succeed('Done');
+
+    const config = readConfig();
+    const formatted = formatWithPrecision(result, config.precision);
+    addHistoryEntry(command, rawArgs, Number(result));
+    printResult(formatted);
   } catch (error) {
     printError(error.message);
   }
 }
 
-/**
- * Displays startup banner and welcome details.
- */
 function showStartup() {
   const banner = figlet.textSync('MathGuru', { horizontalLayout: 'default' });
   console.log(colors.banner(banner));
@@ -135,15 +101,10 @@ function showStartup() {
   console.log(colors.info(`Version: ${packageJson.version}\n`));
 }
 
-/**
- * Handles one category menu loop.
- *
- * @param {string} category - Menu category.
- */
 async function handleCategory(category) {
   const inquirer = await getInquirer();
   const categoryMap = getCategoryChoices();
-  const choices = [...categoryMap[category], { name: 'Back', value: '__back' }];
+  const choices = [...(categoryMap[category] || []), { name: 'Back', value: '__back' }];
 
   while (true) {
     const answer = await inquirer.prompt([
@@ -164,9 +125,6 @@ async function handleCategory(category) {
   }
 }
 
-/**
- * Starts interactive CLI mode.
- */
 async function startInteractiveMode() {
   const inquirer = await getInquirer();
   showStartup();

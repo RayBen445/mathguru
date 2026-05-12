@@ -1,0 +1,8 @@
+{
+  "precision": 4,
+  "colors": true,
+  "exportFormat": "json",
+  "currencySymbol": "$",
+  "scientificMode": false,
+  "shellStartup": false
+}

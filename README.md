@@ -2,204 +2,242 @@
 
 [![npm version](https://img.shields.io/npm/v/mathguru.svg)](https://www.npmjs.com/package/mathguru)
 [![license](https://img.shields.io/npm/l/mathguru.svg)](LICENSE)
+[![tests](https://img.shields.io/badge/tests-jest-brightgreen)](#testing)
 
-A professional Node.js math, economics, and finance library with a polished CLI (command mode + interactive menu mode).
-
-## Version
-
-Current package version: **1.1.0**
-
----
+A professional developer-focused CLI ecosystem for mathematics, scientific formulas, economics, and finance.
 
 ## Installation
-
-### As a library
 
 ```bash
 npm install mathguru
 ```
 
-### As a global CLI
+Global CLI:
 
 ```bash
 npm install -g mathguru
 ```
 
-### Local CLI development
+## CLI Usage
 
 ```bash
-npm link
+mathguru add 2 3
+mathguru sqrt 25
+mathguru inflation 500 700
+mathguru eval "sqrt(25) + 5"
 ```
 
----
+Alias:
+
+```bash
+mg add 2 3
+```
+
+## Offline Docs / Help
+
+```bash
+mathguru docs
+mathguru help
+```
+
+Includes commands, examples, categories, aliases, and economics/finance usage.
+
+## Precision Controls
+
+Per command:
+
+```bash
+mathguru divide 10 3 --precision 2
+mathguru sqrt 2 --precision 5
+```
+
+Global config:
+
+```bash
+mathguru config set precision 2
+mathguru config get precision
+```
+
+## History System
+
+```bash
+mathguru history
+mathguru clear-history
+```
+
+History entries include:
+- command
+- inputs
+- result
+- timestamp
+
+## Export System
+
+```bash
+mathguru export history json
+mathguru export result csv
+```
+
+Formats:
+- JSON
+- TXT
+- CSV
+
+Files are saved under `exports/`.
+
+## Config System
+
+```bash
+mathguru config
+mathguru config set colors false
+mathguru config set exportFormat csv
+mathguru config set currencySymbol ₦
+mathguru config set shellStartup true
+```
+
+Config values are persisted in local `config.json` storage.
+
+## Shell Mode
+
+```bash
+mathguru shell
+```
+
+Example:
+
+```text
+> add 2 3
+5
+
+> sqrt 81
+9
+
+> inflation 500 700
+40
+```
+
+Shell supports:
+- command history
+- `help`
+- `clear`
+- `exit`
+
+## Formula Engine
+
+```bash
+mathguru eval "5 * (10 + 2)"
+mathguru eval "sqrt(25) + 5"
+mathguru eval "50% * 200"
+mathguru eval "2^8"
+```
+
+Supported:
+- `+ - * /`
+- parentheses
+- `sqrt(...)`
+- powers `^`
+- percentages `%`
+
+## Advanced Terminal UX
+
+- `chalk` for colored output
+- `figlet` banners
+- `ora` spinners
+- `inquirer` keyboard-friendly menus
+- section dividers and table formatting
+- success/error/info styles
+
+## Plugin Foundation
+
+Plugin architecture is initialized in `src/plugins/`.
+
+Prepared for future plugin categories:
+- statistics
+- graph
+- AI
+- engineering formulas
+
+## API Usage
+
+```js
+const {
+  add,
+  sqrt,
+  inflationRate,
+  evaluateExpression,
+  setConfigValue,
+  readHistory,
+} = require('mathguru');
+
+console.log(add(2, 3));
+console.log(sqrt(25));
+console.log(inflationRate(500, 700));
+console.log(evaluateExpression('sqrt(25) + 5'));
+setConfigValue('precision', 2);
+console.log(readHistory());
+```
+
+Type definitions are provided via `types/index.d.ts` for editor autocomplete.
+
+## Screenshots / Output Examples
+
+```text
+----------------------------------------
+Calculation History
+----------------------------------------
+timestamp                | command | inputs      | result
+-------------------------|---------|-------------|-------
+2026-05-12T10:00:00.000Z | add     | ["2","3"] | 5
+```
+
+## Testing
+
+```bash
+npm test
+```
+
+Uses Jest for:
+- math functions
+- parser
+- config/history/export
+- CLI commands
+- shell helpers
+- update notifier integration
 
 ## Project Structure
 
 ```text
 mathguru/
 ├── bin/
-│   └── mathguru.js
 ├── src/
 │   ├── basic/
 │   ├── scientific/
 │   ├── economics/
 │   ├── finance/
 │   ├── cli/
+│   ├── shell/
+│   ├── parser/
+│   ├── config/
+│   ├── history/
+│   ├── export/
+│   ├── plugins/
 │   └── utils/
-├── index.js
-├── package.json
+├── tests/
+├── exports/
+├── types/
 ├── README.md
+├── CHANGELOG.md
+├── LICENSE
+├── package.json
 └── test.js
 ```
 
----
+## Contributing
 
-## CLI Usage
-
-### Command mode
-
-```bash
-mathguru add 2 3
-mathguru factorial 5
-mathguru inflation 500 700
-mathguru help
-mathguru version
-```
-
-### Interactive mode
-
-Run without arguments:
-
-```bash
-mathguru
-```
-
-This opens an interactive terminal app with:
-
-- ASCII startup banner (figlet)
-- colored output (chalk)
-- category menu:
-  - Basic Math
-  - Scientific Math
-  - Economics
-  - Finance
-  - Help
-  - Exit
-
----
-
-## Interactive Terminal Output Examples
-
-### Startup example
-
-```text
- __  __       _   _      _____                 
-|  \/  | __ _| |_| |__  |  ___|   _ _ __   ___ 
-| |\/| |/ _` | __| '_ \ | |_ | | | | '_ \ / _ \
-| |  | | (_| | |_| | | ||  _|| |_| | | | |  __/
-|_|  |_|\__,_|\__|_| |_||_|   \__,_|_| |_|\___|
-
-Welcome to MathGuru Interactive CLI
-Version: 1.1.0
-```
-
-### Result example
-
-```text
-Select a category: Basic Math
-Choose an operation: Add
-Enter a: 12
-Enter b: 8
-Result: 20
-```
-
----
-
-## Command Reference
-
-### Basic Math
-
-- `mathguru add <a> <b>`
-- `mathguru subtract <a> <b>`
-- `mathguru multiply <a> <b>`
-- `mathguru divide <a> <b>`
-- `mathguru square <x>`
-
-### Scientific Math
-
-- `mathguru factorial <n>`
-- `mathguru power <base> <exponent>`
-- `mathguru sqrt <x>`
-- `mathguru average <n1> <n2> ...`
-- `mathguru percentage <value> <total>`
-
-### Economics
-
-- `mathguru inflation <oldPrice> <newPrice>`
-- `mathguru gdp-growth <oldGDP> <newGDP>`
-
-### Finance
-
-- `mathguru simple-interest <principal> <rate> <time>`
-- `mathguru compound-interest <principal> <rate> <time> <frequency>`
-- `mathguru loan-repayment <principal> <annualRate> <months>`
-
----
-
-## JavaScript API Usage
-
-```js
-const {
-  add,
-  sqrt,
-  factorial,
-  simpleInterest,
-  compoundInterest,
-  inflationRate,
-  gdpGrowth,
-  loanRepayment,
-} = require('mathguru');
-
-console.log(add(2, 3));
-console.log(sqrt(25));
-console.log(factorial(5));
-console.log(simpleInterest(1000, 5, 2));
-console.log(compoundInterest(1000, 5, 2, 12));
-console.log(inflationRate(500, 700));
-console.log(gdpGrowth(10000, 12000));
-console.log(loanRepayment(100000, 7.5, 60));
-```
-
----
-
-## Validation and Error Handling
-
-MathGuru validates all inputs and shows friendly errors for:
-
-- missing values
-- invalid numbers
-- divide-by-zero
-- empty average input
-- command misuse or unknown command
-
----
-
-## CommonJS Compatibility
-
-MathGuru remains CommonJS compatible:
-
-- `require()` imports
-- `module.exports` exports
-
----
-
-## Run Tests
-
-```bash
-npm test
-```
-
----
+1. Fork and create a feature branch.
+2. Add tests for your changes.
+3. Run `npm test`.
+4. Open a pull request.
 
 ## License
 
