@@ -16,15 +16,27 @@ function tokenize(expression) {
 
     if (isDigit(ch) || ch === '.') {
       let value = ch;
+      let dotCount = ch === '.' ? 1 : 0;
       i += 1;
+
       while (i < expression.length && (isDigit(expression[i]) || expression[i] === '.')) {
+        if (expression[i] === '.') {
+          dotCount += 1;
+        }
         value += expression[i];
         i += 1;
       }
-      if (!/^\d*\.?\d+$/.test(value)) {
+
+      if (dotCount > 1 || value === '.') {
         throw new Error(`eval: invalid number '${value}'.`);
       }
-      tokens.push({ type: 'number', value: Number(value) });
+
+      const numeric = Number(value);
+      if (Number.isNaN(numeric) || !Number.isFinite(numeric)) {
+        throw new Error(`eval: invalid number '${value}'.`);
+      }
+
+      tokens.push({ type: 'number', value: numeric });
       continue;
     }
 
