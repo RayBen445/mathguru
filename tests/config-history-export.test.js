@@ -9,13 +9,28 @@ const { readConfig, setConfigValue, getConfigValue } = require('../src/config/co
 const { addHistoryEntry, readHistory, clearHistory, getLatestHistoryEntry } = require('../src/history/historyManager');
 const { exportData } = require('../src/export/exportManager');
 
+const originalCwd = process.cwd();
+const workDir = path.join(os.tmpdir(), `mathguru-export-${Date.now()}`);
+
 describe('config/history/export', () => {
   beforeAll(() => {
     fs.mkdirSync(homeDir, { recursive: true });
+    fs.mkdirSync(workDir, { recursive: true });
+  });
+
+  beforeEach(() => {
+    process.chdir(workDir);
+  });
+
+  afterEach(() => {
+    const exportsPath = path.join(workDir, 'exports');
+    fs.rmSync(exportsPath, { recursive: true, force: true });
   });
 
   afterAll(() => {
+    process.chdir(originalCwd);
     fs.rmSync(homeDir, { recursive: true, force: true });
+    fs.rmSync(workDir, { recursive: true, force: true });
   });
 
   test('reads and updates config', () => {
