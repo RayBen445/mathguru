@@ -5,6 +5,9 @@
  */
 
 const mathguru = require('./index');
+const path = require('path');
+const { spawnSync } = require('child_process');
+const packageJson = require('./package.json');
 
 let passed = 0;
 let failed = 0;
@@ -42,6 +45,16 @@ function assertThrows(description, fn, expectedMessagePart) {
       console.error(`  ❌ FAIL: ${description} — unexpected message: ${error.message}`);
       failed += 1;
     }
+  }
+}
+
+function assertIncludes(description, text, expectedPart) {
+  if (text.includes(expectedPart)) {
+    console.log(`  ✅ PASS: ${description}`);
+    passed += 1;
+  } else {
+    console.error(`  ❌ FAIL: ${description} — expected output to include "${expectedPart}"`);
+    failed += 1;
   }
 }
 
@@ -83,6 +96,35 @@ assertThrows('sqrt(-1) throws non-negative error', () => mathguru.sqrt(-1), '0 o
 assertThrows('factorial(2.5) throws integer error', () => mathguru.factorial(2.5), 'must be an integer');
 assertThrows('percentage(1, 0) throws total zero error', () => mathguru.percentage(1, 0), 'must not be 0');
 assertThrows('average([]) throws empty array error', () => mathguru.average([]), 'cannot be an empty array');
+
+console.log('\n--- cli command mode ---');
+const cliPath = path.join(__dirname, 'bin', 'mathguru.js');
+
+const addCli = spawnSync('node', [cliPath, 'add', '2', '3'], { encoding: 'utf8' });
+assert('CLI add exits with code 0', addCli.status, 0);
+assertIncludes('CLI add prints result', addCli.stdout, 'Result:');
+assertIncludes('CLI add prints numeric output', addCli.stdout, '5');
+
+const factorialCli = spawnSync('node', [cliPath, 'factorial', '5'], { encoding: 'utf8' });
+assert('CLI factorial exits with code 0', factorialCli.status, 0);
+assertIncludes('CLI factorial prints 120', factorialCli.stdout, '120');
+
+const inflationCli = spawnSync('node', [cliPath, 'inflation', '500', '700'], { encoding: 'utf8' });
+assert('CLI inflation exits with code 0', inflationCli.status, 0);
+assertIncludes('CLI inflation prints 40', inflationCli.stdout, '40');
+
+const helpCli = spawnSync('node', [cliPath, 'help'], { encoding: 'utf8' });
+assert('CLI help exits with code 0', helpCli.status, 0);
+assertIncludes('CLI help shows usage', helpCli.stdout, 'Usage:');
+assertIncludes('CLI help mentions interactive mode', helpCli.stdout, 'Interactive Mode');
+
+const versionCli = spawnSync('node', [cliPath, 'version'], { encoding: 'utf8' });
+assert('CLI version exits with code 0', versionCli.status, 0);
+assertIncludes('CLI version prints package version', versionCli.stdout, packageJson.version);
+
+const invalidCli = spawnSync('node', [cliPath, 'not-a-command'], { encoding: 'utf8' });
+assert('CLI invalid command exits with code 1', invalidCli.status, 1);
+assertIncludes('CLI invalid command prints helpful error', invalidCli.stderr, 'Unknown command');
 
 console.log(`\nResults: ${passed} passed, ${failed} failed\n`);
 
