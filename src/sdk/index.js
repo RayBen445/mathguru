@@ -23,6 +23,9 @@ const calc = require('../calc/calcEngine');
 const graph = require('../graph/graphEngine');
 const latex = require('../latex/latexEngine');
 const formulas = require('../formulas/formulaEngine');
+const trainer = require('../trainer/trainerEngine');
+const convert = require('../convert/unitConverter');
+const markdown = require('../markdown/mathMarkdown');
 
 module.exports = {
   basic: { add, subtract, multiply, divide, square },
@@ -55,6 +58,19 @@ module.exports = {
     search: formulas.search,
     explain: formulas.explain,
     categories: formulas.getCategories,
+  },
+  trainer: {
+    generate: trainer.generate,
+    format: trainer.formatQuiz,
+  },
+  convert: {
+    run: convert.convert,
+    format: convert.formatConversion,
+  },
+  markdown: {
+    detect: markdown.detectExpressions,
+    format: markdown.formatMarkdownMath,
+    processFile: markdown.processFile,
   },
   parser: { evaluateExpression },
 };

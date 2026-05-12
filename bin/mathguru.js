@@ -38,7 +38,7 @@ function printHistory() {
       timestamp: entry.timestamp,
       command: entry.command,
       inputs: JSON.stringify(entry.inputs),
-      result: entry.result,
+      result: typeof entry.result === 'object' ? JSON.stringify(entry.result) : entry.result,
     }))
   );
 }
@@ -51,6 +51,43 @@ function printConfig(config) {
       value: String(value),
     }))
   );
+}
+
+function isNumeric(value) {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+function printCommandOutput(result, precision) {
+  if (isNumeric(result)) {
+    printResult(formatWithPrecision(result, precision));
+    return;
+  }
+
+  if (typeof result === 'string') {
+    printInfo(result);
+    return;
+  }
+
+  printInfo(JSON.stringify(result, null, 2));
+}
+
+function applyGraphConfigIfMissing(commandName, args, config) {
+  if (commandName !== 'graph') {
+    return args;
+  }
+
+  const hasFormat = args.includes('--format');
+  const hasSize = args.includes('--size');
+  const next = [...args];
+
+  if (!hasFormat && config.graphFormat) {
+    next.push('--format', config.graphFormat);
+  }
+  if (!hasSize && config.graphSize) {
+    next.push('--size', config.graphSize);
+  }
+
+  return next;
 }
 
 async function main() {
@@ -206,19 +243,20 @@ async function main() {
   const { args: cleanArgs, precision } = readPrecisionFromArgs(rawArgs);
   const finalPrecision = precision ?? config.precision;
   const resolvedCommand = resolveCommandName(command);
+  const commandArgs = applyGraphConfigIfMissing(resolvedCommand, cleanArgs, config);
 
   try {
-    const spinner = ['eval', 'compound-interest', 'loan-repayment'].includes(resolvedCommand)
+    const spinner = ['eval', 'compound-interest', 'loan-repayment', 'calc', 'graph'].includes(resolvedCommand)
       ? ora('Processing...').start()
       : null;
 
-    const result = executeCommand(resolvedCommand, cleanArgs);
+    const result = executeCommand(resolvedCommand, commandArgs);
     if (spinner) {
       spinner.succeed('Done');
     }
 
-    addHistoryEntry(resolvedCommand, cleanArgs, Number(result));
-    printResult(formatWithPrecision(result, finalPrecision));
+    addHistoryEntry(resolvedCommand, commandArgs, result);
+    printCommandOutput(result, finalPrecision);
     printFooter();
   } catch (error) {
     const suggestions = getCommandSuggestions(command, listCommands());

@@ -19,6 +19,8 @@ const CATEGORY_CHOICES = [
   'Graphing',
   'LaTeX',
   'Formula Engine',
+  'Education',
+  'Utilities',
   'Help',
   'Exit',
 ];
@@ -100,6 +102,17 @@ async function runInteractiveOperation(command) {
       rawArgs = [await promptTextValue('Enter graph expression (e.g. sin(x)):')];
     } else if (command === 'formula' || command === 'search' || command === 'explain') {
       rawArgs = [await promptTextValue('Enter query/category:')];
+    } else if (command === 'trainer') {
+      const category = await promptTextValue('Enter trainer category (algebra|calculus|statistics):');
+      const difficulty = await promptTextValue('Enter difficulty (easy|medium|hard):');
+      rawArgs = [category, '--difficulty', difficulty];
+    } else if (command === 'convert') {
+      const value = await promptTextValue('Enter numeric value:');
+      const from = await promptTextValue('Enter from unit (e.g. km):');
+      const to = await promptTextValue('Enter to unit (e.g. miles):');
+      rawArgs = [value, from, to];
+    } else if (command === 'md') {
+      rawArgs = [await promptTextValue('Enter markdown file path:')];
     } else {
       const definition = COMMANDS[command];
       rawArgs = [];

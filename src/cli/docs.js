@@ -36,8 +36,21 @@ Usage:
 - mathguru formula economics cobb-douglas
 - mathguru formula finance compound-interest
 - mathguru formula search derivative
-- mathguru search inflation
+- mathguru search inflation --category economics
 - mathguru explain cobb-douglas
+
+=== Trainer ===
+- mathguru trainer calculus --difficulty medium --count 3
+- mathguru trainer algebra --difficulty easy
+- mathguru trainer statistics --difficulty hard
+
+=== Unit Conversion ===
+- mathguru convert 5 km miles
+- mathguru convert 100 celsius fahrenheit
+- mathguru convert 10 kg pounds
+
+=== Markdown Math ===
+- mathguru md notes.md
 
 === Aliases ===
 - mg (CLI alias for mathguru)
@@ -69,8 +82,11 @@ Usage:
 - mathguru shell
 - Shell commands: help, clear, stats, exit
 
-Interactive Mode:
-- Run 'mathguru' with no arguments to open the interactive terminal menu.
+Future-ready architecture (not implemented yet):
+- AI integrations
+- VSCode extension
+- REST API server
+- cloud sync and collaboration
 
 Terminal Footer:
 - ${POWERED_BY_KONTYRA}

@@ -24,21 +24,30 @@ const COMMAND_ALIASES = {
   plot: 'graph',
 };
 
-function parseGraphArgs(rawArgs) {
+function parseOptions(rawArgs) {
   const args = [...rawArgs];
-  const expression = args.shift();
+  const positionals = [];
   const options = {};
 
   while (args.length > 0) {
     const token = args.shift();
-    if (token === '--size') {
-      options.size = args.shift();
-    } else if (token === '--format') {
-      options.format = args.shift();
+    if (token && token.startsWith('--')) {
+      const key = token.replace(/^--/, '');
+      options[key] = args.shift();
+    } else {
+      positionals.push(token);
     }
   }
 
-  return { expression, options };
+  return { positionals, options };
+}
+
+function parseGraphArgs(rawArgs) {
+  const { positionals, options } = parseOptions(rawArgs);
+  return {
+    expression: positionals[0],
+    options,
+  };
 }
 
 function executeFormulaCommand(rawArgs) {
@@ -233,7 +242,8 @@ const COMMANDS = {
       if (!expression) {
         throw new Error('graph: expression is required.');
       }
-      if (options.format && ['svg', 'png'].includes(String(options.format).toLowerCase())) {
+      const normalizedFormat = String(options.format || 'ascii').toLowerCase();
+      if (['svg', 'png'].includes(normalizedFormat)) {
         const filePath = mathguru.graph.export(expression, options);
         return `Graph exported to ${filePath}`;
       }
@@ -264,7 +274,8 @@ const COMMANDS = {
     variadic: true,
     execute: (rawArgs) => {
       const query = rawArgs.join(' ');
-      const results = searchFormulas(query);
+      const { options } = parseOptions(rawArgs);
+      const results = searchFormulas(query, options.category ? { category: options.category } : {});
       return `Search results for '${query}':\n${formatFormulaSummary(results.slice(0, 10))}`;
     },
   },
@@ -275,6 +286,49 @@ const COMMANDS = {
     args: ['formula'],
     variadic: true,
     execute: (rawArgs) => explainFormula(rawArgs.join(' ')),
+  },
+  trainer: {
+    category: 'Education',
+    label: 'Trainer',
+    usage: 'mathguru trainer calculus --difficulty medium --count 3',
+    args: ['category', 'options...'],
+    variadic: true,
+    execute: (rawArgs) => {
+      const { positionals, options } = parseOptions(rawArgs);
+      const category = positionals[0];
+      if (!category) {
+        throw new Error('trainer: category is required (algebra|calculus|statistics).');
+      }
+      const quiz = mathguru.trainer.generate(category, options.difficulty || 'easy', Number(options.count || 3));
+      return mathguru.trainer.format(quiz);
+    },
+  },
+  convert: {
+    category: 'Utilities',
+    label: 'Unit Converter',
+    usage: 'mathguru convert 5 km miles',
+    args: ['value', 'from', 'to'],
+    variadic: true,
+    execute: (rawArgs) => {
+      const value = rawArgs[0];
+      const from = rawArgs[1];
+      const to = rawArgs[2];
+      if (value === undefined || !from || !to) {
+        throw new Error('convert: usage mathguru convert <value> <fromUnit> <toUnit>');
+      }
+      const result = mathguru.convert.run(value, from, to);
+      return mathguru.convert.format(result);
+    },
+  },
+  md: {
+    category: 'Utilities',
+    label: 'Markdown Math Formatter',
+    usage: 'mathguru md notes.md',
+    args: ['filePath'],
+    execute: (rawArgs) => {
+      const result = mathguru.markdown.processFile(rawArgs[0]);
+      return `Formatted ${result.expressions} math expressions in ${result.filePath}`;
+    },
   },
 };
 
@@ -313,6 +367,8 @@ function getCategoryChoices() {
     Graphing: [],
     LaTeX: [],
     'Formula Engine': [],
+    Education: [],
+    Utilities: [],
   };
   Object.entries(COMMANDS).forEach(([command, definition]) => {
     if (categories[definition.category]) {

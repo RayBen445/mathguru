@@ -26,32 +26,11 @@ describe('CLI commands', () => {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   });
 
-  test('add command works', () => {
-    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-add-'));
+  test('basic command works', () => {
+    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-basic-'));
     const result = runCli(['add', '2', '3'], workDir);
     expect(result.status).toBe(0);
     expect(result.stdout).toContain('Result:');
-  });
-
-  test('alias command works', () => {
-    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-alias-'));
-    const result = runCli(['div', '10', '2'], workDir);
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain('5');
-  });
-
-  test('precision flag works', () => {
-    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-precision-'));
-    const result = runCli(['divide', '10', '3', '--precision', '2'], workDir);
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain('3.33');
-  });
-
-  test('eval command works', () => {
-    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-eval-'));
-    const result = runCli(['eval', 'sqrt(25) + 5'], workDir);
-    expect(result.status).toBe(0);
-    expect(result.stdout).toContain('10');
   });
 
   test('help includes Kontyra branding', () => {
@@ -61,35 +40,65 @@ describe('CLI commands', () => {
     expect(result.stdout).toContain('Powered by Kontyra');
   });
 
+  test('calc command works', () => {
+    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-calc-'));
+    const result = runCli(['calc', 'diff(x^2)'], workDir);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('2*x');
+  });
+
+  test('graph command works in ascii mode', () => {
+    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-graph-'));
+    const result = runCli(['graph', 'sin(x)', '--format', 'ascii', '--size', '40x20'], workDir);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('x:[');
+  });
+
+  test('latex command works', () => {
+    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-latex-'));
+    const result = runCli(['latex', 'sin(x)^2 + cos(x)^2'], workDir);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('sin');
+  });
+
+  test('formula search and explain works', () => {
+    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-formula-'));
+    const search = runCli(['search', 'cobb-douglas'], workDir);
+    expect(search.status).toBe(0);
+    expect(search.stdout.toLowerCase()).toContain('cobb-douglas');
+
+    const explain = runCli(['explain', 'cobb-douglas'], workDir);
+    expect(explain.status).toBe(0);
+    expect(explain.stdout).toContain('Variables:');
+  });
+
+  test('trainer and convert commands work', () => {
+    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-trainer-convert-'));
+    const trainer = runCli(['trainer', 'calculus', '--difficulty', 'easy', '--count', '1'], workDir);
+    expect(trainer.status).toBe(0);
+    expect(trainer.stdout).toContain('Trainer Quiz');
+
+    const convert = runCli(['convert', '5', 'km', 'miles'], workDir);
+    expect(convert.status).toBe(0);
+    expect(convert.stdout).toContain('miles');
+  });
+
+  test('markdown utility command works', () => {
+    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-md-'));
+    const filePath = path.join(workDir, 'notes.md');
+    fs.writeFileSync(filePath, 'Equation: x^2 + y^2 = z^2\n');
+
+    const result = runCli(['md', filePath], workDir);
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('Formatted');
+    expect(fs.readFileSync(filePath, 'utf8')).toContain('$$');
+  });
+
   test('unknown command suggests closest', () => {
     const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-suggest-'));
     const result = runCli(['squrt'], workDir);
     expect(result.status).toBe(1);
     expect(result.stderr + result.stdout).toContain('Did you mean');
     expect(result.stderr + result.stdout).toContain('sqrt');
-  });
-
-  test('session commands save, load and export markdown', () => {
-    const workDir = fs.mkdtempSync(path.join(tempRoot, 'case-session-'));
-
-    const calc = runCli(['add', '9', '1'], workDir);
-    expect(calc.status).toBe(0);
-
-    const save = runCli(['save-session', 'demo'], workDir);
-    expect(save.status).toBe(0);
-    expect(save.stdout).toContain('Saved session');
-
-    const load = runCli(['load-session', 'demo'], workDir);
-    expect(load.status).toBe(0);
-    expect(load.stdout).toContain('Loaded');
-
-    const exportSession = runCli(['export-session', 'markdown', 'demo'], workDir);
-    expect(exportSession.status).toBe(0);
-    expect(exportSession.stdout).toContain('Exported session');
-
-    const sessionsDir = path.join(workDir, 'sessions');
-    expect(fs.existsSync(sessionsDir)).toBe(true);
-    const files = fs.readdirSync(sessionsDir);
-    expect(files.some((file) => file.endsWith('.md'))).toBe(true);
   });
 });

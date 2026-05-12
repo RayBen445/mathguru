@@ -16,6 +16,12 @@ describe('shell mode helpers', () => {
     expect(result.output).toContain('5');
   });
 
+  test('handleShellLine routes symbolic shorthand to calc', () => {
+    const result = handleShellLine('integrate(sin(x))');
+    expect(result.type).toBe('result');
+    expect(String(result.output)).toContain('cos');
+  });
+
   test('handleShellLine handles control commands', () => {
     expect(handleShellLine('help').type).toBe('docs');
     expect(handleShellLine('clear').type).toBe('clear');

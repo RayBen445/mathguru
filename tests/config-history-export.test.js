@@ -6,12 +6,7 @@ const homeDir = path.join(os.tmpdir(), `mathguru-test-${Date.now()}`);
 process.env.HOME = homeDir;
 
 const { readConfig, setConfigValue, getConfigValue } = require('../src/config/configManager');
-const {
-  addHistoryEntry,
-  readHistory,
-  clearHistory,
-  getLatestHistoryEntry,
-} = require('../src/history/historyManager');
+const { addHistoryEntry, readHistory, clearHistory, getLatestHistoryEntry } = require('../src/history/historyManager');
 const { exportData } = require('../src/export/exportManager');
 
 const originalCwd = process.cwd();
@@ -43,8 +38,12 @@ describe('config/history/export', () => {
     expect(config.precision).toBeDefined();
     setConfigValue('precision', 2);
     setConfigValue('exportFormat', 'markdown');
+    setConfigValue('graphSize', '120x40');
+    setConfigValue('graphFormat', 'svg');
     expect(getConfigValue('precision')).toBe(2);
     expect(getConfigValue('exportFormat')).toBe('md');
+    expect(getConfigValue('graphSize')).toBe('120x40');
+    expect(getConfigValue('graphFormat')).toBe('svg');
   });
 
   test('writes and clears history', () => {

@@ -37,6 +37,16 @@ function getSessionStatsRows(stats) {
   ];
 }
 
+function shouldRouteToCalc(trimmed, command) {
+  if (['diff', 'integrate', 'solve', 'simplify'].some((prefix) => trimmed.startsWith(`${prefix}(`))) {
+    return true;
+  }
+  if (command.includes('(') && command.includes(')')) {
+    return true;
+  }
+  return false;
+}
+
 function handleShellLine(line) {
   const trimmed = line.trim();
   if (!trimmed) {
@@ -44,8 +54,8 @@ function handleShellLine(line) {
   }
 
   const tokens = splitArgs(trimmed);
-  const command = tokens[0];
-  const args = tokens.slice(1);
+  let command = tokens[0];
+  let args = tokens.slice(1);
 
   if (command === 'help' || command === 'docs') {
     return { type: 'docs' };
@@ -63,16 +73,26 @@ function handleShellLine(line) {
     return { type: 'clear' };
   }
 
+  if (shouldRouteToCalc(trimmed, command)) {
+    command = 'calc';
+    args = [trimmed];
+  }
+
   const config = readConfig();
   const { args: cleanedArgs, precision } = readPrecisionFromArgs(args);
   const resolvedCommand = resolveCommandName(command);
   const result = executeCommand(resolvedCommand, cleanedArgs);
   const finalPrecision = precision ?? config.precision;
+
+  const output = typeof result === 'number' && Number.isFinite(result)
+    ? formatWithPrecision(result, finalPrecision)
+    : String(result);
+
   addHistoryEntry(resolvedCommand, cleanedArgs, result);
 
   return {
     type: 'result',
-    output: formatWithPrecision(result, finalPrecision),
+    output,
     command: resolvedCommand,
   };
 }
