@@ -3,7 +3,7 @@ const os = require('os');
 
 process.env.HOME = path.join(os.tmpdir(), `mathguru-shell-${Date.now()}`);
 
-const { splitArgs, handleShellLine } = require('../src/shell/shell');
+const { splitArgs, handleShellLine, createSessionStats, getSessionStatsRows } = require('../src/shell/shell');
 
 describe('shell mode helpers', () => {
   test('splitArgs handles quoted values', () => {
@@ -19,6 +19,14 @@ describe('shell mode helpers', () => {
   test('handleShellLine handles control commands', () => {
     expect(handleShellLine('help').type).toBe('docs');
     expect(handleShellLine('clear').type).toBe('clear');
+    expect(handleShellLine('stats').type).toBe('stats');
     expect(handleShellLine('exit').type).toBe('exit');
+  });
+
+  test('session stats helpers build rows', () => {
+    const stats = createSessionStats();
+    const rows = getSessionStatsRows(stats);
+    expect(Array.isArray(rows)).toBe(true);
+    expect(rows.some((row) => row.metric === 'Commands run')).toBe(true);
   });
 });

@@ -64,10 +64,11 @@ function normalizeValue(key, value) {
 
   if (key === 'exportFormat') {
     const lowered = String(value).toLowerCase();
-    if (!['json', 'txt', 'csv'].includes(lowered)) {
-      throw new Error('config: exportFormat must be one of json, txt, csv.');
+    const normalized = lowered === 'markdown' ? 'md' : lowered;
+    if (!['json', 'txt', 'csv', 'md'].includes(normalized)) {
+      throw new Error('config: exportFormat must be one of json, txt, csv, md/markdown.');
     }
-    return lowered;
+    return normalized;
   }
 
   if (key === 'currencySymbol') {

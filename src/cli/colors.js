@@ -13,6 +13,7 @@ function apply(colorFn, text) {
 module.exports = {
   setColorsEnabled,
   banner: (text) => apply(chalk.cyanBright, text),
+  brand: (text) => apply(chalk.bold.cyan, text),
   title: (text) => apply(chalk.bold.blue, text),
   success: (text) => apply(chalk.green, text),
   error: (text) => apply(chalk.red, text),
@@ -20,4 +21,5 @@ module.exports = {
   info: (text) => apply(chalk.gray, text),
   value: (text) => apply(chalk.bold.white, text),
   section: (text) => apply(chalk.bold.magenta, text),
+  prompt: (text) => apply(chalk.bold.green, text),
 };

@@ -1,4 +1,5 @@
 const colors = require('./colors');
+const { POWERED_BY_KONTYRA } = require('./branding');
 
 function printDivider() {
   console.log(colors.info('----------------------------------------'));
@@ -8,6 +9,11 @@ function printSection(title) {
   printDivider();
   console.log(colors.section(title));
   printDivider();
+}
+
+function printFooter() {
+  printDivider();
+  console.log(colors.brand(POWERED_BY_KONTYRA));
 }
 
 function printResult(result) {
@@ -57,6 +63,7 @@ function printTable(rows) {
 module.exports = {
   printDivider,
   printSection,
+  printFooter,
   printResult,
   printInfo,
   printSuccess,

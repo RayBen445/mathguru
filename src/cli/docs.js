@@ -1,9 +1,13 @@
+const { POWERED_BY_KONTYRA } = require('./branding');
+
 function buildDocsText(version) {
   return `MathGuru CLI v${version}
+${POWERED_BY_KONTYRA}
 
 Usage:
 - mathguru <command> [arguments]
 - mathguru
+- mg <command> [arguments]
 
 === Core Commands ===
 - mathguru add 2 3
@@ -27,11 +31,17 @@ Usage:
 - mathguru config set precision 2
 
 === Export ===
-- mathguru export history [json|txt|csv]
-- mathguru export result [json|txt|csv]
+- mathguru export history [json|txt|csv|markdown]
+- mathguru export result [json|txt|csv|markdown]
+
+=== Session Management ===
+- mathguru save-session [name]
+- mathguru load-session [name]
+- mathguru export-session [json|txt|markdown] [name]
 
 === Shell ===
 - mathguru shell
+- Shell commands: help, clear, stats, exit
 
 === Economics/Finance Examples ===
 - mathguru gdp-growth 10000 12000
@@ -45,6 +55,9 @@ Usage:
 
 Interactive Mode:
 - Run 'mathguru' with no arguments to open the interactive terminal menu.
+
+Terminal Footer:
+- ${POWERED_BY_KONTYRA}
 `;
 }
 

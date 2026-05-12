@@ -5,6 +5,8 @@ const { buildDocsText } = require('../cli/docs');
 const { addHistoryEntry } = require('../history/historyManager');
 const { readConfig } = require('../config/configManager');
 const { formatWithPrecision, readPrecisionFromArgs } = require('../utils/precision');
+const colors = require('../cli/colors');
+const { POWERED_BY_KONTYRA } = require('../cli/branding');
 
 function splitArgs(input) {
   const result = [];
@@ -14,6 +16,25 @@ function splitArgs(input) {
     result.push(match[1] ?? match[2] ?? match[3]);
   }
   return result;
+}
+
+function createSessionStats() {
+  return {
+    startedAt: new Date(),
+    commandsRun: 0,
+    successes: 0,
+    errors: 0,
+  };
+}
+
+function getSessionStatsRows(stats) {
+  const uptimeSeconds = Math.max(0, Math.floor((Date.now() - stats.startedAt.getTime()) / 1000));
+  return [
+    { metric: 'Commands run', value: stats.commandsRun },
+    { metric: 'Successful commands', value: stats.successes },
+    { metric: 'Failed commands', value: stats.errors },
+    { metric: 'Session uptime (s)', value: uptimeSeconds },
+  ];
 }
 
 function handleShellLine(line) {
@@ -28,6 +49,10 @@ function handleShellLine(line) {
 
   if (command === 'help' || command === 'docs') {
     return { type: 'docs' };
+  }
+
+  if (command === 'stats') {
+    return { type: 'stats' };
   }
 
   if (command === 'exit') {
@@ -53,15 +78,17 @@ function handleShellLine(line) {
 }
 
 async function startShell() {
+  const stats = createSessionStats();
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     historySize: 1000,
-    prompt: '> ',
+    prompt: colors.prompt('mathguru> '),
   });
 
-  console.log(`MathGuru Shell v${packageJson.version}`);
-  console.log('Type help for commands, clear to clear, exit to quit.');
+  console.log(colors.title(`MathGuru Shell v${packageJson.version}`));
+  console.log(colors.brand(POWERED_BY_KONTYRA));
+  console.log(colors.info('Type help for commands, clear to clear, stats for session stats, exit to quit.'));
   rl.prompt();
 
   rl.on('line', (line) => {
@@ -76,6 +103,14 @@ async function startShell() {
         rl.prompt();
         return;
       }
+      if (result.type === 'stats') {
+        console.log(colors.section('Session Statistics'));
+        getSessionStatsRows(stats).forEach((row) => {
+          console.log(`${colors.info(row.metric)}: ${colors.value(String(row.value))}`);
+        });
+        rl.prompt();
+        return;
+      }
       if (result.type === 'clear') {
         console.clear();
         rl.prompt();
@@ -86,21 +121,32 @@ async function startShell() {
         return;
       }
 
-      console.log(result.output);
+      stats.commandsRun += 1;
+      stats.successes += 1;
+      console.log(colors.success(result.output));
       rl.prompt();
     } catch (error) {
-      console.error(`Error: ${error.message}`);
+      stats.commandsRun += 1;
+      stats.errors += 1;
+      console.error(colors.error(`Error: ${error.message}`));
       rl.prompt();
     }
   });
 
   rl.on('close', () => {
-    console.log('Goodbye from MathGuru shell!');
+    console.log(colors.section('Session Statistics'));
+    getSessionStatsRows(stats).forEach((row) => {
+      console.log(`${colors.info(row.metric)}: ${colors.value(String(row.value))}`);
+    });
+    console.log(colors.brand(POWERED_BY_KONTYRA));
+    console.log(colors.info('Goodbye from MathGuru shell!'));
   });
 }
 
 module.exports = {
   splitArgs,
   handleShellLine,
+  createSessionStats,
+  getSessionStatsRows,
   startShell,
 };

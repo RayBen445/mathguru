@@ -37,7 +37,9 @@ describe('config/history/export', () => {
     const config = readConfig();
     expect(config.precision).toBeDefined();
     setConfigValue('precision', 2);
+    setConfigValue('exportFormat', 'markdown');
     expect(getConfigValue('precision')).toBe(2);
+    expect(getConfigValue('exportFormat')).toBe('md');
   });
 
   test('writes and clears history', () => {
@@ -50,14 +52,17 @@ describe('config/history/export', () => {
     expect(readHistory()).toEqual([]);
   });
 
-  test('exports json/txt/csv', () => {
+  test('exports json/txt/csv/markdown', () => {
     const payload = { command: 'add', inputs: ['2', '3'], result: 5, timestamp: new Date().toISOString() };
     const jsonFile = exportData('result', payload, 'json');
     const txtFile = exportData('result', payload, 'txt');
     const csvFile = exportData('result', payload, 'csv');
+    const mdFile = exportData('result', payload, 'markdown');
 
     expect(fs.existsSync(jsonFile)).toBe(true);
     expect(fs.existsSync(txtFile)).toBe(true);
     expect(fs.existsSync(csvFile)).toBe(true);
+    expect(fs.existsSync(mdFile)).toBe(true);
+    expect(mdFile.endsWith('.md')).toBe(true);
   });
 });

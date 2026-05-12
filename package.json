@@ -1,7 +1,7 @@
 {
   "name": "mathguru",
   "version": "1.2.0",
-  "description": "Ecosystem-grade math, economics, and finance toolkit with advanced CLI and shell support.",
+  "description": "MathGuru ecosystem-grade developer terminal toolkit. Powered by Kontyra.",
   "main": "index.js",
   "types": "types/index.d.ts",
   "bin": {
@@ -21,7 +21,10 @@
     "finance",
     "cli",
     "shell",
-    "utility"
+    "utility",
+    "kontyra",
+    "developer-tooling",
+    "terminal"
   ],
   "author": "RayBen445",
   "license": "MIT",
@@ -51,5 +54,10 @@
     "testMatch": [
       "**/tests/**/*.test.js"
     ]
+  },
+  "kontyra": {
+    "poweredBy": "Powered by Kontyra",
+    "aiReady": true,
+    "aiImplemented": false
   }
 }

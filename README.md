@@ -1,10 +1,14 @@
-# mathguru
+# MathGuru CLI
+
+**Powered by Kontyra**
 
 [![npm version](https://img.shields.io/npm/v/mathguru.svg)](https://www.npmjs.com/package/mathguru)
 [![license](https://img.shields.io/npm/l/mathguru.svg)](LICENSE)
 [![tests](https://img.shields.io/badge/tests-jest-brightgreen)](#testing)
 
-A professional developer-focused CLI ecosystem for mathematics, scientific formulas, economics, and finance.
+MathGuru is a polished ecosystem-grade developer terminal toolkit for mathematics, scientific workflows, economics, and finance.
+
+---
 
 ## Installation
 
@@ -18,84 +22,41 @@ Global CLI:
 npm install -g mathguru
 ```
 
-## CLI Usage
+CLI aliases:
 
 ```bash
 mathguru add 2 3
-mathguru sqrt 25
+mg sqrt 25
+```
+
+---
+
+## Kontyra Branding
+
+MathGuru is delivered as a **Kontyra** product and includes:
+- startup banner branding
+- help/docs branding
+- terminal footer branding
+- package metadata branding
+
+Display text:
+
+```text
+Powered by Kontyra
+```
+
+---
+
+## CLI Examples
+
+```bash
+mathguru add 2 3
+mathguru divide 10 3 --precision 2
 mathguru inflation 500 700
 mathguru eval "sqrt(25) + 5"
 ```
 
-Alias:
-
-```bash
-mg add 2 3
-```
-
-## Offline Docs / Help
-
-```bash
-mathguru docs
-mathguru help
-```
-
-Includes commands, examples, categories, aliases, and economics/finance usage.
-
-## Precision Controls
-
-Per command:
-
-```bash
-mathguru divide 10 3 --precision 2
-mathguru sqrt 2 --precision 5
-```
-
-Global config:
-
-```bash
-mathguru config set precision 2
-mathguru config get precision
-```
-
-## History System
-
-```bash
-mathguru history
-mathguru clear-history
-```
-
-History entries include:
-- command
-- inputs
-- result
-- timestamp
-
-## Export System
-
-```bash
-mathguru export history json
-mathguru export result csv
-```
-
-Formats:
-- JSON
-- TXT
-- CSV
-
-Files are saved under `exports/`.
-
-## Config System
-
-```bash
-mathguru config
-mathguru config set colors false
-mathguru config set exportFormat csv
-mathguru config set currencySymbol ₦
-mathguru config set shellStartup true
-```
-
-Config values are persisted in local `config.json` storage.
+---
 
 ## Shell Mode
 
@@ -103,106 +64,174 @@ Config values are persisted in local `config.json` storage.
 mathguru shell
 ```
 
+Shell features:
+- persistent command session
+- command history
+- `help`, `clear`, `stats`, `exit`
+- colorful prompts
+- session statistics
+
 Example:
 
 ```text
-> add 2 3
+mathguru> add 2 3
 5
 
-> sqrt 81
-9
-
-> inflation 500 700
+mathguru> inflation 500 700
 40
 ```
 
-Shell supports:
-- command history
-- `help`
-- `clear`
-- `exit`
+---
 
-## Formula Engine
+## Session Management
 
 ```bash
-mathguru eval "5 * (10 + 2)"
-mathguru eval "sqrt(25) + 5"
-mathguru eval "50% * 200"
-mathguru eval "2^8"
+mathguru save-session
+mathguru save-session workday
+mathguru load-session workday
+mathguru export-session markdown workday
 ```
 
-Supported:
-- `+ - * /`
-- parentheses
-- `sqrt(...)`
-- powers `^`
-- percentages `%`
+Session data includes:
+- command history
+- timestamps
+- results
+
+Stored in:
+- `sessions/`
+
+Supported session export formats:
+- JSON
+- TXT
+- Markdown
+
+---
+
+## History and Exports
+
+History commands:
+
+```bash
+mathguru history
+mathguru clear-history
+```
+
+Export commands:
+
+```bash
+mathguru export history json
+mathguru export history markdown
+mathguru export result csv
+```
+
+Supported export formats:
+- JSON
+- CSV
+- TXT
+- Markdown
+
+Stored in:
+- `exports/`
+
+---
+
+## Config System
+
+```bash
+mathguru config
+mathguru config get precision
+mathguru config set precision 2
+mathguru config set colors false
+mathguru config set shellStartup true
+mathguru config set exportFormat markdown
+```
+
+Config options:
+- decimal precision
+- colors on/off
+- shell startup behavior
+- default export format
+- currency symbol
+
+Stored locally in user config storage and defaults from project `config.json`.
+
+---
+
+## Offline Documentation
+
+```bash
+mathguru docs
+mathguru help
+```
+
+Includes:
+- command categories
+- examples
+- economics docs
+- finance docs
+- shell docs
+- export docs
+
+---
+
+## Plugin-Ready Architecture
+
+Plugin foundation is available in `src/plugins/`.
+
+Prepared for future extensions:
+- statistics plugins
+- graphing plugins
+- engineering formula plugins
+- future AI support architecture (**no AI implementation yet**)
+
+---
 
 ## Advanced Terminal UX
 
-- `chalk` for colored output
-- `figlet` banners
-- `ora` spinners
-- `inquirer` keyboard-friendly menus
-- section dividers and table formatting
-- success/error/info styles
+Built with:
+- `chalk`
+- `figlet`
+- `ora`
+- `inquirer`
 
-## Plugin Foundation
+Provides:
+- loading spinners
+- section dividers
+- clean spacing
+- styled success/error/info output
 
-Plugin architecture is initialized in `src/plugins/`.
+---
 
-Prepared for future plugin categories:
-- statistics
-- graph
-- AI
-- engineering formulas
-
-## API Usage
+## SDK Usage (CommonJS)
 
 ```js
-const {
-  add,
-  sqrt,
-  inflationRate,
-  evaluateExpression,
-  setConfigValue,
-  readHistory,
-} = require('mathguru');
+const mathguru = require('mathguru');
 
-console.log(add(2, 3));
-console.log(sqrt(25));
-console.log(inflationRate(500, 700));
-console.log(evaluateExpression('sqrt(25) + 5'));
-setConfigValue('precision', 2);
-console.log(readHistory());
+console.log(mathguru.add(2, 3));
+console.log(mathguru.sqrt(81));
+console.log(mathguru.compoundInterest(1000, 5, 2, 12));
+console.log(mathguru.evaluateExpression('sqrt(25) + 5'));
 ```
 
-Type definitions are provided via `types/index.d.ts` for editor autocomplete.
+Type definitions are available via `types/index.d.ts` for autocomplete.
 
-## Screenshots / Output Examples
+---
+
+## Screenshots / Terminal Example
 
 ```text
-----------------------------------------
-Calculation History
-----------------------------------------
-timestamp                | command | inputs      | result
--------------------------|---------|-------------|-------
-2026-05-12T10:00:00.000Z | add     | ["2","3"] | 5
+================================================
+   __  __       _   _      _____ _      ___
+  |  \/  | __ _| |_| |__  |  ___| |    |_ _|
+  | |\/| |/ _` | __| '_ \ | |_  | |     | |
+  | |  | | (_| | |_| | | ||  _| | |___  | |
+  |_|  |_|\__,_|\__|_| |_||_|   |_____| |___|
+
+Powered by Kontyra
+================================================
 ```
 
-## Testing
-
-```bash
-npm test
-```
-
-Uses Jest for:
-- math functions
-- parser
-- config/history/export
-- CLI commands
-- shell helpers
-- update notifier integration
+---
 
 ## Project Structure
 
@@ -222,8 +251,9 @@ mathguru/
 │   ├── export/
 │   ├── plugins/
 │   └── utils/
-├── tests/
 ├── exports/
+├── sessions/
+├── tests/
 ├── types/
 ├── README.md
 ├── CHANGELOG.md
@@ -232,12 +262,36 @@ mathguru/
 └── test.js
 ```
 
+---
+
+## Testing
+
+```bash
+npm test
+npm run test:legacy
+```
+
+Jest covers:
+- CLI commands
+- shell mode
+- exports
+- configs
+- history
+- parser
+- precision system
+- session management
+
+---
+
 ## Contributing
 
-1. Fork and create a feature branch.
-2. Add tests for your changes.
-3. Run `npm test`.
-4. Open a pull request.
+1. Fork the repository.
+2. Create a feature branch.
+3. Add/update tests for changes.
+4. Run full test suite.
+5. Open a pull request.
+
+---
 
 ## License
 

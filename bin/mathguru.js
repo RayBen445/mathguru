@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 
 const ora = require('ora');
-const figlet = require('figlet');
 const packageJson = require('../package.json');
 const { executeCommand, resolveCommandName, listCommands } = require('../src/cli/commands');
 const { buildHelpText } = require('../src/cli/help');
 const colors = require('../src/cli/colors');
-const { printError, printInfo, printResult, printSuccess, printSection, printTable } = require('../src/cli/format');
+const { printError, printInfo, printResult, printSuccess, printSection, printTable, printFooter } = require('../src/cli/format');
 const { startInteractiveMode } = require('../src/cli/menu');
 const { readHistory, clearHistory, addHistoryEntry, getLatestHistoryEntry } = require('../src/history/historyManager');
 const { readConfig, setConfigValue, getConfigValue } = require('../src/config/configManager');
@@ -16,6 +15,7 @@ const { startShell } = require('../src/shell/shell');
 const { getCommandSuggestions } = require('../src/utils/suggestions');
 const { listPlugins, loadBuiltInPlugins } = require('../src/plugins/loader');
 const { runUpdateNotifier } = require('../src/cli/updateNotifier');
+const { saveSession, loadSession, exportSession } = require('../src/session/sessionManager');
 
 function printHistory() {
   const history = readHistory();
@@ -54,35 +54,63 @@ async function main() {
       await startShell();
       return;
     }
-    console.log(colors.banner(figlet.textSync('MathGuru', { horizontalLayout: 'default' })));
     await startInteractiveMode();
     return;
   }
 
   if (command === 'help' || command === 'docs') {
     printInfo(buildHelpText(packageJson.version));
+    printFooter();
     return;
   }
 
   if (command === 'version') {
     printInfo(packageJson.version);
+    printFooter();
     return;
   }
 
   if (command === 'history') {
     printHistory();
+    printFooter();
     return;
   }
 
   if (command === 'clear-history') {
     clearHistory();
     printSuccess('History cleared successfully.');
+    printFooter();
+    return;
+  }
+
+  if (command === 'save-session') {
+    const name = args[1];
+    const saved = saveSession(name);
+    printSuccess(`Saved session with ${saved.count} entries to ${saved.filePath}`);
+    printFooter();
+    return;
+  }
+
+  if (command === 'load-session') {
+    const loaded = loadSession(args[1]);
+    printSuccess(`Loaded ${loaded.count} entries from ${loaded.filePath}`);
+    printFooter();
+    return;
+  }
+
+  if (command === 'export-session') {
+    const format = args[1] || config.exportFormat || 'json';
+    const name = args[2];
+    const filePath = exportSession(format, name);
+    printSuccess(`Exported session to ${filePath}`);
+    printFooter();
     return;
   }
 
   if (command === 'plugins') {
     printSection('Plugins');
     printTable(listPlugins().map((plugin) => ({ name: plugin.name, version: plugin.version, description: plugin.description })));
+    printFooter();
     return;
   }
 
@@ -90,6 +118,7 @@ async function main() {
     const sub = args[1];
     if (!sub) {
       printConfig(getConfigValue());
+      printFooter();
       return;
     }
 
@@ -99,6 +128,7 @@ async function main() {
         throw new Error('config get: key is required.');
       }
       printInfo(`${key}: ${String(getConfigValue(key))}`);
+      printFooter();
       return;
     }
 
@@ -110,6 +140,7 @@ async function main() {
       }
       const updated = setConfigValue(key, value);
       printSuccess(`Updated ${key} = ${updated}`);
+      printFooter();
       return;
     }
 
@@ -125,6 +156,7 @@ async function main() {
       if (target === 'history') {
         const filePath = exportData('history', readHistory(), format);
         spinner.succeed(`Exported history to ${filePath}`);
+        printFooter();
         return;
       }
 
@@ -135,10 +167,11 @@ async function main() {
         }
         const filePath = exportData('result', latest, format);
         spinner.succeed(`Exported latest result to ${filePath}`);
+        printFooter();
         return;
       }
 
-      throw new Error('export: usage mathguru export <history|result> [json|txt|csv]');
+      throw new Error('export: usage mathguru export <history|result> [json|txt|csv|markdown]');
     } catch (error) {
       spinner.fail('Export failed');
       throw error;
@@ -167,6 +200,7 @@ async function main() {
 
     addHistoryEntry(resolvedCommand, cleanArgs, Number(result));
     printResult(formatWithPrecision(result, finalPrecision));
+    printFooter();
   } catch (error) {
     const suggestions = getCommandSuggestions(command, listCommands());
     printError(error.message);
@@ -174,11 +208,13 @@ async function main() {
       printInfo('\nDid you mean:');
       suggestions.forEach((suggestion) => printInfo(`- ${suggestion}`));
     }
+    printFooter();
     process.exitCode = 1;
   }
 }
 
 main().catch((error) => {
   printError(error.message || 'Unexpected CLI failure.');
+  printFooter();
   process.exit(1);
 });

@@ -1,14 +1,14 @@
-const figlet = require('figlet');
 const ora = require('ora');
 const packageJson = require('../../package.json');
 const { COMMANDS, executeCommand, getCategoryChoices } = require('./commands');
 const { parseNumber } = require('./validation');
 const colors = require('./colors');
-const { printError, printResult, printInfo } = require('./format');
+const { printError, printResult, printInfo, printFooter } = require('./format');
 const { buildHelpText } = require('./help');
 const { readConfig } = require('../config/configManager');
 const { addHistoryEntry } = require('../history/historyManager');
 const { formatWithPrecision } = require('../utils/precision');
+const { buildStartupBanner } = require('./branding');
 
 const CATEGORY_CHOICES = ['Basic Math', 'Scientific Math', 'Economics', 'Finance', 'Help', 'Exit'];
 let inquirerInstance;
@@ -95,8 +95,7 @@ async function runInteractiveOperation(command) {
 }
 
 function showStartup() {
-  const banner = figlet.textSync('MathGuru', { horizontalLayout: 'default' });
-  console.log(colors.banner(banner));
+  console.log(buildStartupBanner());
   console.log(colors.title('Welcome to MathGuru Interactive CLI'));
   console.log(colors.info(`Version: ${packageJson.version}\n`));
 }
@@ -141,11 +140,13 @@ async function startInteractiveMode() {
 
     if (answer.category === 'Exit') {
       printInfo('Goodbye from MathGuru!');
+      printFooter();
       return;
     }
 
     if (answer.category === 'Help') {
       console.log(buildHelpText(packageJson.version));
+      printFooter();
       continue;
     }
 

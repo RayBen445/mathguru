@@ -19,7 +19,7 @@ export function evaluateExpression(expression: string): number;
 export interface MathGuruConfig {
   precision: number;
   colors: boolean;
-  exportFormat: 'json' | 'txt' | 'csv';
+  exportFormat: 'json' | 'txt' | 'csv' | 'md';
   currencySymbol: string;
   scientificMode: boolean;
   shellStartup: boolean;
